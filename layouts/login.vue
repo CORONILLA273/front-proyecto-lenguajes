@@ -1,9 +1,6 @@
 <template>
   <v-app>
     <v-main>
-      <h1 class="contenedor">
-        Welcome, create your school account
-      </h1>
       <v-row
         style="width: 100%;"
         justify="center"
