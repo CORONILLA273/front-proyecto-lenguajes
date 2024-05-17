@@ -1,0 +1,5 @@
+/* assets/css/main.css */
+.button-text-transform {
+    text-transform: capitalize !important; /* Solo capitaliza la primera letra de cada palabra */
+  }
+  
