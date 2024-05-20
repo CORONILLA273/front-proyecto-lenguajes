@@ -70,6 +70,10 @@
         </div>
       </div>
 
+      <div class="trusted-by">
+        Trusted by company like
+      </div>
+
       <!-- Additional content -->
       <v-container>
         <h1>Welcome to Our Website</h1>
@@ -229,4 +233,17 @@
   margin: 20px auto; /* Margen superior e inferior de 20px, centrado horizontalmente */
   border-radius: 10px; /* Curvatura de 10px en las esquinas */
 }
+
+.trusted-by {
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 44.65px;
+  text-align: center;
+  color: #000000; /* Ajusta según el color de fondo */
+  margin-top: 20px;
+  position: relative;
+  z-index: 2; /* Asegura que esté sobre cualquier fondo o imagen */
+}
+
 </style>
