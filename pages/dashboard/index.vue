@@ -171,11 +171,12 @@
                   </v-card-text>
                   <v-card-text align="center">
                     <v-form>
+                      <!-- Modificar por "nombre escuela"-->
                       <v-text-field
-                        v-model="school"
+                        v-model="email"
                         class="fixed-width"
                         outlined
-                        placeholder="Enter the name of school"
+                        placeholder="Enter the email"
                         type="text"
                       />
                       <v-text-field
@@ -195,7 +196,7 @@
                       elevation="0"
                       class="fixed-width"
                       style="height: 50px;"
-                      @click="step = 3"
+                      @click="login"
                     >
                       <span style="text-transform: none; color: white;">
                         login
@@ -263,6 +264,23 @@ export default {
     }
   },
   methods: {
+    async login () {
+      try {
+        const response = await this.$axios.post('/api/auth/login', {
+          email: this.email,
+          password: this.password
+        })
+        if (response.data.token) {
+          console.log('Login successful', response.data.token)
+        }
+      } catch (error) {
+        if (error.response) {
+          console.error('Error response:', error.response.data)
+        } else {
+          console.error('Error', error.message)
+        }
+      }
+    },
     signupUser () {
       // Lógica de registro de usuario
     },
