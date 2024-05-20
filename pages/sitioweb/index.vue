@@ -68,20 +68,6 @@
           <!-- Nueva imagen agregada aquí -->
           <img src="~/assets/Fotoq.png" alt="Descripción de la imagen" class="image-below-button">
         </div>
-
-        <!-- Sección de confianza de empresas -->
-        <div class="trusted-section">
-          <v-container>
-            <v-row justify="center">
-              <v-col cols="12" class="text-center">
-                <span class="trusted-title">Trusted by company like</span>
-              </v-col>
-              <v-col v-for="n in 5" :key="n" cols="2" md="1">
-                <v-img src="~/assets/logo{n}.png" alt="Company Logo" />
-              </v-col>
-            </v-row>
-          </v-container>
-        </div>
       </div>
 
       <!-- Additional content -->
@@ -125,7 +111,7 @@
 }
 
 /* Responsiveness */
-@media (max-width: 950px) {
+@media (max-width: 600px) {
   .v-app-bar {
     flex-direction: column;
     align-items: center;
@@ -133,10 +119,6 @@
   .button-container {
     flex-direction: column;
     align-items: center;
-  }
-  .image-below-button {
-    width: 100%; /* Se ajusta al 100% del ancho del contenedor */
-    height: auto; /* La altura se ajusta automáticamente para mantener la proporción */
   }
 }
 
@@ -247,26 +229,4 @@
   margin: 20px auto; /* Margen superior e inferior de 20px, centrado horizontalmente */
   border-radius: 10px; /* Curvatura de 10px en las esquinas */
 }
-
-.trusted-section {
-  margin-top: 40px; /* Espacio sobre la sección para separarla de la imagen */
-}
-
-.trusted-title {
-  font-size: 24px; /* Tamaño del texto */
-  color: #666; /* Color del texto */
-  margin-bottom: 20px; /* Espacio debajo del título */
-}
-
-.v-col {
-  display: flex;
-  justify-content: center; /* Centra los logos dentro de las columnas */
-  align-items: center; /* Alinea verticalmente los logos */
-}
-
-.v-img {
-  max-width: 100%; /* Asegura que el logo no sea más grande que su contenedor */
-  height: auto; /* Mantiene la proporción del logo */
-}
-
 </style>
