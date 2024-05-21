@@ -109,16 +109,15 @@
                   <v-card-title class="headline font-weight-bold">
                     Slack integration
                   </v-card-title>
-                  <v-card-subtitle>
+                  <v-card-subtitle class="subtile-slack">
                     Statisdaa is a school management solution that offers a personalized portal to each type of user.
                   </v-card-subtitle>
                   <v-card-text>
                     <div class="d-flex align-center">
-                      <!-- Development button -->
+                      <!-- Development button and Avatar group -->
                       <v-btn class="development-btn ma-2 text-capitalize" elevation="0">
                         Development
                       </v-btn>
-                      <!-- Avatar group -->
                       <v-avatar-group>
                         <v-avatar size="24" class="ma-1">
                           <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg">
@@ -132,14 +131,16 @@
                       </v-avatar-group>
                     </div>
                     <v-divider class="my-3" />
-                    <div class="d-flex align-center">
-                      <v-icon class="mr-1">
-                        mdi-calendar
-                      </v-icon>
-                      <span>7 feb 2022</span>
-                      <v-chip class="ml-auto amber darken-1 white--text">
+                    <div class="d-flex justify-space-between align-center">
+                      <v-chip class="custom-chip">
                         14
                       </v-chip>
+                      <div>
+                        <v-icon class="mr-1">
+                          mdi-calendar
+                        </v-icon>
+                        <span>7 feb 2022</span>
+                      </div>
                     </div>
                   </v-card-text>
                 </v-card>
@@ -150,15 +151,78 @@
           <!-- Create Your Task Column -->
           <v-col cols="12" md="4">
             <v-card class="mx-auto my-2" elevation="2" max-width="100%">
-              <v-card-title>Create your task</v-card-title>
-              <v-card-subtitle>Statisdaa is a school management solution that offers a personalized portal to each type of user, ensuring that your institution is always engaged with teachers, students, and their parents.</v-card-subtitle>
+              <v-card-title class="task-title">
+                Create your task
+              </v-card-title>
+              <v-card-subtitle class="task-subtitle">
+                Statisdaa is a school management solution that offers a personalized portal to each type of user, ensuring that your institution is always engaged with teachers, students, and their parents.
+              </v-card-subtitle>
               <v-card-text>
-                <v-text-field label="Create your task" outlined dense />
-                <v-text-field label="Manage the task easily and clearly" outlined dense multiline />
-                <v-btn color="primary">
-                  Submit
-                </v-btn>
+                <v-form>
+                  <v-text-field
+                    label="Create your task"
+                    outlined
+                    dense
+                    placeholder="Create your task"
+                  />
+                  <v-text-field
+                    label="Create your task"
+                    outlined
+                    dense
+                    placeholder="Create your task"
+                  />
+                  <!-- Blue Box with Vuetify components -->
+                  <v-card color="#0A92DD" dark class="mt-4">
+                    <v-card-title class="info-title">
+                      Manage the task easily and clearly
+                    </v-card-title>
+                    <v-card-subtitle>
+                      Statisdaa increases communication between all stakeholders: students, teachers, parents, and administrative staff, with a dedicated web portal for any type of end-user. Keeping your students and parents engaged with the academic process is a crucial factor in each student's success.
+                    </v-card-subtitle>
+                  </v-card>
+                </v-form>
               </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+
+      <v-container class="my-separator" />
+
+      <v-container>
+        <v-row>
+          <!-- Column for Text -->
+          <v-col cols="12" md="6">
+            <div class="formatted-text">
+              <h2>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus odio pellentesque pellentesque a. Amet ut lobortis pellentesque a, luctus maecenas.</p>
+              <p>Feugiat sed enim vitae viverra cras tristique eu. Pellentesque bibendum volutpat metus, dictum.</p>
+              <!-- Fila para el ícono y el texto -->
+              <v-row align="center" no-gutters>
+                <v-col cols="auto">
+                  <v-avatar size="80">
+                    <!-- Tamaño del contenedor del ícono -->
+                    <v-icon size="60">
+                      mdi-account-circle
+                    </v-icon> <!-- Tamaño específico del ícono -->
+                  </v-avatar>
+                </v-col>
+                <v-col>
+                  <div class="display-1">
+                    80,000K
+                  </div>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                </v-col>
+              </v-row>
+            </div>
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-card flat>
+              <v-img
+                src="/mano.png"
+                alt="A descriptive alt text"
+                class="move-image-up elevation-0"
+              />
             </v-card>
           </v-col>
         </v-row>
@@ -361,8 +425,8 @@
   }
 
   .development-btn {
-    background: #D89925; /* Background color */
-    color: #FFF9EB; /* Font color */
+    background:#FFF9EB !important;  /* Background color */
+    color: #D89925 !important; /* Font color */
     font-family: 'Kumbh Sans', sans-serif; /* Font family */
     font-size: 12px; /* Font size */
     font-weight: 500; /* Font weight */
@@ -382,5 +446,94 @@
 
   .my-separator {
     margin-top: 50px; /* Adjust the margin as needed for visual separation */
+  }
+
+  .custom-chip {
+    background-color: #FFFFFF !important; /* Background color set to white */
+    color: #000000; /* Text color set to black */
+  }
+
+  .subtile-slack {
+    color: #bdbdbd !important;
+  }
+
+  .task-title {
+    font-family: 'Kumbh Sans', sans-serif;
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 39.69px;
+    text-align: left;
+    color: #333;
+    margin-bottom: 25px; /* Add space between title and subtitle */
+  }
+
+  .task-subtitle {
+    font-family: 'Kumbh Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 17.36px;
+    text-align: left;
+    color: #bdbdbd !important;
+    margin-top: 16px; /* Optionally adjust if more space is needed */
+  }
+
+  .v-text-field__slot, .v-textarea__slot {
+    font-family: 'Kumbh Sans', sans-serif;
+  }
+
+  .info-box {
+    background-color: #1777f7 !important; /* Adjust the color to match the blue from the image */
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 20px; /* Space above the blue box */
+  }
+
+  .v-text-field__slot {
+    font-family: 'Kumbh Sans', sans-serif;
+  }
+
+  .info-title {
+    font-family: 'Kumbh Sans', sans-serif;
+    font-size: 16px; /* Adjusted for visual hierarchy */
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .formatted-text h2 {
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1.3;
+  margin-bottom: 16px;
+  text-align: left; /* Ensure the title is left-aligned */
+}
+
+.formatted-text p {
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  text-align: left; /* Ensure paragraphs are left-aligned */
+  margin-bottom: 12px;
+  text-indent: 0px; /* Remove any indent */
+  color: #667085 !important;
+}
+
+.move-image-up {
+    transform: translate(95px, -70px); /* Ajusta este valor según la necesidad */
+
+  }
+
+  .formatted-text h2, .formatted-text p, .display-1 {
+    /* Tus estilos existentes */
+    text-align: left;
+  }
+
+  .display-1 {
+    font-size: 3rem;
+    font-weight: bold;
+  }
+  .formatted-text h2, .formatted-text p {
+    text-align: left;
   }
 </style>
