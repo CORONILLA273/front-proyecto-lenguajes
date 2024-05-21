@@ -74,6 +74,96 @@
         Trusted by company like
       </div>
 
+      <v-container>
+        <v-row justify="center" class="logo-row">
+          <v-col cols="auto" class="logo-col">
+            <v-img src="/logo3.png" alt="Logo 1" class="company-logo" />
+          </v-col>
+          <v-col cols="auto" class="logo-col">
+            <v-img src="/logo2.png" alt="Logo 2" class="company-logo" />
+          </v-col>
+          <v-col cols="auto" class="logo-col">
+            <v-img src="/logo1.png" alt="Logo 3" class="company-logo" />
+          </v-col>
+          <v-col cols="auto" class="logo-col">
+            <v-img src="/logo3.png" alt="Logo 1" class="company-logo" />
+          </v-col>
+          <v-col cols="auto" class="logo-col">
+            <v-img src="/logo2.png" alt="Logo 2" class="company-logo" />
+          </v-col>
+          <v-col cols="auto" class="logo-col">
+            <v-img src="/logo1.png" alt="Logo 3" class="company-logo" />
+          </v-col>
+        </v-row>
+      </v-container>
+
+      <v-container class="my-separator" />
+
+      <v-container>
+        <v-row>
+          <!-- Slack Integration Cards Column -->
+          <v-col cols="12" md="8">
+            <v-row>
+              <v-col v-for="n in 4" :key="n" cols="12" md="6">
+                <v-card class="slack-card" elevation="2">
+                  <v-card-title class="headline font-weight-bold">
+                    Slack integration
+                  </v-card-title>
+                  <v-card-subtitle>
+                    Statisdaa is a school management solution that offers a personalized portal to each type of user.
+                  </v-card-subtitle>
+                  <v-card-text>
+                    <div class="d-flex align-center">
+                      <!-- Development button -->
+                      <v-btn class="development-btn ma-2 text-capitalize" elevation="0">
+                        Development
+                      </v-btn>
+                      <!-- Avatar group -->
+                      <v-avatar-group>
+                        <v-avatar size="24" class="ma-1">
+                          <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg">
+                        </v-avatar>
+                        <v-avatar size="24" class="ma-1">
+                          <img src="https://cdn.vuetifyjs.com/images/lists/2.jpg">
+                        </v-avatar>
+                        <v-avatar size="24" class="ma-1">
+                          <img src="https://cdn.vuetifyjs.com/images/lists/3.jpg">
+                        </v-avatar>
+                      </v-avatar-group>
+                    </div>
+                    <v-divider class="my-3" />
+                    <div class="d-flex align-center">
+                      <v-icon class="mr-1">
+                        mdi-calendar
+                      </v-icon>
+                      <span>7 feb 2022</span>
+                      <v-chip class="ml-auto amber darken-1 white--text">
+                        14
+                      </v-chip>
+                    </div>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-col>
+
+          <!-- Create Your Task Column -->
+          <v-col cols="12" md="4">
+            <v-card class="mx-auto my-2" elevation="2" max-width="100%">
+              <v-card-title>Create your task</v-card-title>
+              <v-card-subtitle>Statisdaa is a school management solution that offers a personalized portal to each type of user, ensuring that your institution is always engaged with teachers, students, and their parents.</v-card-subtitle>
+              <v-card-text>
+                <v-text-field label="Create your task" outlined dense />
+                <v-text-field label="Manage the task easily and clearly" outlined dense multiline />
+                <v-btn color="primary">
+                  Submit
+                </v-btn>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+
       <!-- Additional content -->
       <v-container>
         <h1>Welcome to Our Website</h1>
@@ -246,4 +336,51 @@
   z-index: 2; /* Asegura que esté sobre cualquier fondo o imagen */
 }
 
+/* Estilos para los logos */
+.company-logo {
+  width: 44px; /* Ancho especificado */
+  height: 46px; /* Altura especificada */
+}
+
+/* Estilos adicionales para la fila y columna que contiene los logos */
+.logo-row {
+  margin-top: 20px; /* Añadir un margen superior si es necesario */
+}
+
+.logo-col {
+  display: flex;
+  justify-content: center; /* Centra los logos horizontalmente */
+  align-items: center; /* Centra los logos verticalmente */
+  padding: 25px; /* Añadir algo de padding para espaciar los logos */
+}
+
+.slack-card {
+    width: 350px; /* Adjusted width to fit elements on one line */
+    height: auto; /* Adjusted height for content fit */
+    opacity: 1;
+  }
+
+  .development-btn {
+    background: #D89925; /* Background color */
+    color: #FFF9EB; /* Font color */
+    font-family: 'Kumbh Sans', sans-serif; /* Font family */
+    font-size: 12px; /* Font size */
+    font-weight: 500; /* Font weight */
+    line-height: 14.88px; /* Line height */
+    text-align: left; /* Text alignment */
+    border-radius: 25px; /* Rounded corners */
+    margin-right: 10px; /* Added margin for spacing */
+  }
+
+  .v-avatar-group {
+    margin-left: 0; /* Adjusted to align better with the button */
+  }
+
+  .v-avatar {
+    margin-right: -8px; /* Overlapping avatars slightly */
+  }
+
+  .my-separator {
+    margin-top: 50px; /* Adjust the margin as needed for visual separation */
+  }
 </style>
