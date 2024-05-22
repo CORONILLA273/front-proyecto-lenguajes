@@ -7,7 +7,7 @@
       >
         <!-- Main Card -->
         <v-card flat style="width: 600px; height: 700px; margin-top: 15px;" align="center" class="d-flex flex-column align-center justify-center">
-          <v-stepper v-model="step">
+          <v-stepper v-model="step" flat>
             <v-stepper-items>
               <!-- Step 1 -->
               <v-stepper-content step="1">
@@ -52,7 +52,6 @@
                   <v-card-actions class="justify-center">
                     <v-btn
                       color="blue"
-                      elevation="0"
                       class="fixed-width"
                       style="height: 50px;"
                       @click="nextStep(1)"
@@ -63,13 +62,13 @@
                     </v-btn>
                   </v-card-actions>
                   <v-card-actions class="justify-center">
-                    <div style="display: flex; align-items: center;">
+                    <div style="display: flex; align-items: center; white-space: nowrap;">
                       <v-card-text style="margin-right: 0px;">
                         Already have an account?
+                        <router-link to="/login" style="text-decoration: none; color: blue;">
+                          Sign in
+                        </router-link>
                       </v-card-text>
-                      <router-link to="/signup" style="text-decoration: none; color: blue;">
-                        Signup
-                      </router-link>
                     </div>
                   </v-card-actions>
                 </v-card>
@@ -77,7 +76,7 @@
 
               <!-- Step 2 -->
               <v-stepper-content step="2">
-                <v-card style="width: 550px; height: 600px; margin-top: 30px;">
+                <v-card flat style="width: 550px; height: 600px; margin-top: 30px;">
                   <v-card-title class="text-center" style="font-size: 29px; margin-bottom: 30px; margin-top: 100px">
                     Udemy school, Choose your password
                   </v-card-title>
@@ -111,7 +110,6 @@
                   <v-card-actions class="justify-center">
                     <v-btn
                       color="blue"
-                      elevation="0"
                       class="fixed-width"
                       style="height: 50px;"
                       @click="nextStep(2)"
@@ -128,7 +126,7 @@
               <v-stepper-content step="3">
                 <v-card flat style="width: 550px; height: 600px; margin-top: 30px;">
                   <v-card-title style="font-size: 29px; margin-bottom: 30px; margin-top: 100px">
-                    Udemy school, Choose your password
+                    Udemy school, Choose your staffs
                   </v-card-title>
                   <v-card-text align="center">
                     <v-form>
@@ -154,7 +152,6 @@
                   <v-card-actions class="justify-center">
                     <v-btn
                       color="blue"
-                      elevation="0"
                       class="fixed-width"
                       style="height: 50px;"
                       @click="nextStep(3)"
@@ -171,24 +168,20 @@
               <v-stepper-content step="4">
                 <v-card flat style="width: 550px; height: 600px; margin-top: 30px;">
                   <v-card-title class="justify-center" style="font-size: 30px; margin-bottom: 30px">
-                    Welcome, Log into you account
+                    All right, let's start!
                   </v-card-title>
                   <v-card-text align="center">
-                    <b>It is our great pleasure to have <br> you on board!</b>
-                  </v-card-text>
-                  <v-card-text align="center">
-                    alo
+                    <b>We're ready, are you too?</b>
                   </v-card-text>
                   <v-card-actions class="justify-center">
                     <v-btn
                       color="blue"
-                      elevation="0"
                       class="fixed-width"
                       style="height: 50px;"
                       @click="signupUser()"
                     >
                       <span style="text-transform: none; color: white;">
-                        login
+                        Finish
                       </span>
                     </v-btn>
                   </v-card-actions>
@@ -198,23 +191,35 @@
           </v-stepper>
         </v-card>
         <!-- Stepper Card -->
-        <v-card flat elevation="0" class="stepper-card">
-          <v-stepper v-model="step" alt-labels>
+        <v-card flat class="stepper-card">
+          <v-stepper v-model="step" flat alt-labels>
             <v-stepper-header>
               <v-stepper-step :complete="isStep1Complete" step="1">
-                Your details <br> Name and email
+                <div class="step-text">
+                  Your details
+                  <small>Name and email</small>
+                </div>
               </v-stepper-step>
               <v-divider />
               <v-stepper-step :complete="isStep2Complete" step="2">
-                Choose a password <br> Choose a secure password
+                <div class="step-text">
+                  Choose a password
+                  <small>Choose a secure password</small>
+                </div>
               </v-stepper-step>
               <v-divider />
               <v-stepper-step :complete="isStep3Complete" step="3">
-                Invite your team <br> Start collaborating
+                <div class="step-text">
+                  Invite your team
+                  <small>Start collaborating</small>
+                </div>
               </v-stepper-step>
               <v-divider />
               <v-stepper-step :complete="isStep4Complete" step="4">
-                Additional Information <br> Provide more details
+                <div class="step-text">
+                  Additional Information
+                  <small>Provide more details</small>
+                </div>
               </v-stepper-step>
             </v-stepper-header>
           </v-stepper>
@@ -276,7 +281,7 @@ export default {
       return !!this.staffNumber && !!this.schoolAddress
     },
     isStep4Complete () {
-      return !!this.staffNumber && !!this.schoolAddress
+      return false
     }
   },
   methods: {
@@ -291,7 +296,7 @@ export default {
     nextStep (currentStep) {
       if (currentStep === 1 && this.isStep1Complete && this.isValidEmail(this.schoolEmail)) {
         this.step = 2
-      } else if (currentStep === 2 && this.isStep2Complete && (this.password === this.confirmPassword)) {
+      } else if (currentStep === 2 && this.isStep2Complete && (this.password.length > 8) && (this.password === this.confirmPassword)) {
         this.step = 3
       } else if (currentStep === 3 && this.isStep3Complete && this.isPositiveInteger(this.staffNumber)) {
         this.step = 4
@@ -318,6 +323,7 @@ export default {
         .catch((err) => {
           console.log('@@@ err => ', err)
         })
+      this.$router.push('/login')
     },
     finish () {
       // Lógica al finalizar el stepper
@@ -357,5 +363,9 @@ export default {
 
 .equal-height {
   height: 700px; /* Ajusta la altura del v-card principal */
+}
+
+.step-text {
+  text-align: center;
 }
 </style>

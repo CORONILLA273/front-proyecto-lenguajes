@@ -18,6 +18,7 @@
                 <!-- Modificar por "nombre escuela"-->
                 <v-text-field
                   v-model="email"
+                  :rules="emailValidation"
                   class="fixed-width"
                   outlined
                   placeholder="Enter the email"
@@ -29,7 +30,7 @@
                   label="Password"
                   outlined
                   class="fixed-width"
-                  :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                  :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                   @click:append="togglePasswordVisibility"
                 />
               </v-form>
@@ -50,11 +51,11 @@
             </v-card-actions>
             <div style="display: flex; align-items: center;">
               <v-card-text style="margin-right: 0px;">
-                Already have an account?
+                Don't have an account yet?
+                <router-link to="/signup" style="text-decoration: none; color: blue;">
+                  Signup
+                </router-link>
               </v-card-text>
-              <router-link to="/signup" style="text-decoration: none; color: blue;">
-                Signup
-              </router-link>
             </div>
           </v-card>
         </v-container>
@@ -70,7 +71,11 @@ export default {
       email: null,
       password: null,
 
-      showPassword: true
+      showPassword: false,
+
+      emailValidation: [
+        v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
+      ]
     }
   },
   methods: {
@@ -86,7 +91,7 @@ export default {
           console.log('@@ res => ', res)
           if (res.data.token) {
             localStorage.setItem('token', res.data.token)
-            this.$router.push('/dashboard')
+            this.$router.push('/home')
           }
         })
         .catch((err) => {
