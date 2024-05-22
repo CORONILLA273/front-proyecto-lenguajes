@@ -24,21 +24,21 @@
                   <v-card-text align="center">
                     <v-form>
                       <v-text-field
-                        v-model="admin"
+                        v-model="adminName"
                         class="fixed-width"
                         outlined
                         placeholder="Enter the name of admin"
                         type="text"
                       />
                       <v-text-field
-                        v-model="school"
+                        v-model="schoolName"
                         class="fixed-width"
                         outlined
                         placeholder="Enter the name of school"
                         type="text"
                       />
                       <v-text-field
-                        v-model="email"
+                        v-model="schoolEmail"
                         class="fixed-width"
                         outlined
                         placeholder="Enter the school email"
@@ -127,15 +127,15 @@
                   </v-card-title>
                   <v-card-text align="center">
                     <v-form>
-                      <v-select
-                        v-model="numberStaff"
+                      <v-text-field
+                        v-model="staffNumber"
                         class="fixed-width"
                         outlined
                         placeholder="Number of staff"
                         type="password"
                       />
                       <v-select
-                        v-model="selectedAddress"
+                        v-model="schoolAddress"
                         :items="schoolAddresses"
                         label="Select a school address"
                         outlined
@@ -170,25 +170,7 @@
                     <b>It is our great pleasure to have <br> you on board!</b>
                   </v-card-text>
                   <v-card-text align="center">
-                    <v-form>
-                      <!-- Modificar por "nombre escuela"-->
-                      <v-text-field
-                        v-model="email"
-                        class="fixed-width"
-                        outlined
-                        placeholder="Enter the email"
-                        type="text"
-                      />
-                      <v-text-field
-                        v-model="password"
-                        :type="showPassword ? 'text' : 'password'"
-                        label="Password"
-                        outlined
-                        class="fixed-width"
-                        :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                        @click:append="togglePasswordVisibility"
-                      />
-                    </v-form>
+                    alo
                   </v-card-text>
                   <v-card-actions class="justify-center">
                     <v-btn
@@ -196,7 +178,7 @@
                       elevation="0"
                       class="fixed-width"
                       style="height: 50px;"
-                      @click="login"
+                      @click="signupUser()"
                     >
                       <span style="text-transform: none; color: white;">
                         login
@@ -239,11 +221,13 @@
 export default {
   data () {
     return {
-      admin: '',
-      school: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
+      adminName: null,
+      schoolName: null,
+      schoolEmail: null,
+      password: null,
+      confirmPassword: null,
+      staffNumber: null,
+      schoolAddress: null,
       step: 1,
 
       showPassword: true,
@@ -264,25 +248,27 @@ export default {
     }
   },
   methods: {
-    async login () {
-      try {
-        const response = await this.$axios.post('/api/auth/login', {
-          email: this.email,
-          password: this.password
-        })
-        if (response.data.token) {
-          console.log('Login successful', response.data.token)
-        }
-      } catch (error) {
-        if (error.response) {
-          console.error('Error response:', error.response.data)
-        } else {
-          console.error('Error', error.message)
-        }
-      }
-    },
     signupUser () {
-      // Lógica de registro de usuario
+      const sendData = {
+        adminName: this.adminName,
+        schoolName: this.schoolName,
+        schoolEmail: this.schoolEmail,
+        password: this.password,
+        staffNumber: this.staffNumber,
+        schoolAddress: this.schoolAddress,
+        id: Date.now().toLocaleString()
+      }
+      console.log('@@@ data => ', sendData)
+      const url = '/api/auth/signup'
+      this.$axios.post(url, sendData)
+        .then((res) => {
+          if (res.data.message === 'Usuario Registrado Satisfactoriamnete') {
+            console.log('Se logro registrar')
+          }
+        })
+        .catch((err) => {
+          console.log('@@@ err => ', err)
+        })
     },
     finish () {
       // Lógica al finalizar el stepper
