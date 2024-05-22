@@ -41,7 +41,7 @@
                       />
                       <v-text-field
                         v-model="schoolEmail"
-                        :rules="[v => !!v || 'Field is required']"
+                        :rules="emailValidation"
                         class="fixed-width"
                         outlined
                         placeholder="Enter the school email"
@@ -86,8 +86,8 @@
                       Choose a password
                       <v-text-field
                         v-model="password"
-                        :rules="[v => !!v || 'Field is required']"
-                        :type="showPassword ? 'text' : 'password'"
+                        :rules="passwordValidation"
+                        :type="showPassword ? 'password' : 'text'"
                         label="Password"
                         outlined
                         class="fixed-width"
@@ -97,13 +97,13 @@
                       Confirm password
                       <v-text-field
                         v-model="confirmPassword"
-                        :rules="[v => !!v || 'Field is required']"
-                        :type="showPassword ? 'text' : 'password'"
+                        :rules="passwordConfirmValidation"
+                        :type="showPasswordConfirm ? 'password' : 'text'"
                         label="Password"
                         outlined
                         class="fixed-width"
-                        :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                        @click:append="togglePasswordVisibility"
+                        :append-icon="showPasswordConfirm ? 'mdi-eye-off' : 'mdi-eye'"
+                        @click:append="togglePasswordConfirmVisibility"
                       />
                       Must be at least 8 characters
                     </v-form>
@@ -134,7 +134,8 @@
                     <v-form>
                       <v-text-field
                         v-model="staffNumber"
-                        :rules="[v => !!v || 'Field is required']"
+                        :rules="[v => !!v || 'Field is required', v => isPositiveInteger(v) || 'Must be a positive integer greater than zero']"
+                        type="number"
                         class="fixed-width"
                         outlined
                         placeholder="Number of staff"
@@ -237,6 +238,7 @@ export default {
       step: 1,
 
       showPassword: true,
+      showPasswordConfirm: true,
 
       selectedAddress: '',
       schoolAddresses: [
@@ -250,6 +252,16 @@ export default {
         '9900 Cedar Avenue, Cedar Grove, NJ 07009, USA',
         '12345 Pine Ridge Road, Atlanta, GA 30301, USA',
         '67890 Oakwood Lane, Oakwood, OH 44146, USA'
+      ],
+
+      passwordValidation: [
+        v => (v && v.length > 8) || 'Password must have be more than 8 chars'
+      ],
+      passwordConfirmValidation: [
+        v => (v && (v === this.password)) || 'Password fields must be same'
+      ],
+      emailValidation: [
+        v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
       ]
     }
   },
@@ -268,12 +280,20 @@ export default {
     }
   },
   methods: {
+    isValidEmail (emailString) {
+      const regex = /.+@.+\..+/
+      return regex.test(emailString)
+    },
+    isPositiveInteger (value) {
+      const number = Number(value)
+      return Number.isInteger(number) && number > 0
+    },
     nextStep (currentStep) {
-      if (currentStep === 1 && this.isStep1Complete) {
+      if (currentStep === 1 && this.isStep1Complete && this.isValidEmail(this.schoolEmail)) {
         this.step = 2
-      } else if (currentStep === 2 && this.isStep2Complete) {
+      } else if (currentStep === 2 && this.isStep2Complete && (this.password === this.confirmPassword)) {
         this.step = 3
-      } else if (currentStep === 3 && this.isStep3Complete) {
+      } else if (currentStep === 3 && this.isStep3Complete && this.isPositiveInteger(this.staffNumber)) {
         this.step = 4
       }
     },
@@ -304,6 +324,9 @@ export default {
     },
     togglePasswordVisibility () {
       this.showPassword = !this.showPassword
+    },
+    togglePasswordConfirmVisibility () {
+      this.showPasswordConfirm = !this.showPasswordConfirm
     }
   }
 }
