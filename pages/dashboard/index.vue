@@ -25,6 +25,7 @@
                     <v-form>
                       <v-text-field
                         v-model="adminName"
+                        :rules="[v => !!v || 'Field is required']"
                         class="fixed-width"
                         outlined
                         placeholder="Enter the name of admin"
@@ -32,6 +33,7 @@
                       />
                       <v-text-field
                         v-model="schoolName"
+                        :rules="[v => !!v || 'Field is required']"
                         class="fixed-width"
                         outlined
                         placeholder="Enter the name of school"
@@ -39,6 +41,7 @@
                       />
                       <v-text-field
                         v-model="schoolEmail"
+                        :rules="[v => !!v || 'Field is required']"
                         class="fixed-width"
                         outlined
                         placeholder="Enter the school email"
@@ -52,7 +55,7 @@
                       elevation="0"
                       class="fixed-width"
                       style="height: 50px;"
-                      @click="step = 2"
+                      @click="nextStep(1)"
                     >
                       <span style="text-transform: none; color: white;">
                         Next
@@ -83,6 +86,7 @@
                       Choose a password
                       <v-text-field
                         v-model="password"
+                        :rules="[v => !!v || 'Field is required']"
                         :type="showPassword ? 'text' : 'password'"
                         label="Password"
                         outlined
@@ -93,6 +97,7 @@
                       Confirm password
                       <v-text-field
                         v-model="confirmPassword"
+                        :rules="[v => !!v || 'Field is required']"
                         :type="showPassword ? 'text' : 'password'"
                         label="Password"
                         outlined
@@ -109,7 +114,7 @@
                       elevation="0"
                       class="fixed-width"
                       style="height: 50px;"
-                      @click="step = 3"
+                      @click="nextStep(2)"
                     >
                       <span style="text-transform: none; color: white;">
                         Next
@@ -129,14 +134,15 @@
                     <v-form>
                       <v-text-field
                         v-model="staffNumber"
+                        :rules="[v => !!v || 'Field is required']"
                         class="fixed-width"
                         outlined
                         placeholder="Number of staff"
-                        type="password"
                       />
                       <v-select
                         v-model="schoolAddress"
                         :items="schoolAddresses"
+                        :rules="[v => !!v || 'Field is required']"
                         label="Select a school address"
                         outlined
                         class="fixed-width"
@@ -150,7 +156,7 @@
                       elevation="0"
                       class="fixed-width"
                       style="height: 50px;"
-                      @click="step = 4"
+                      @click="nextStep(3)"
                     >
                       <span style="text-transform: none; color: white;">
                         Next
@@ -194,19 +200,19 @@
         <v-card flat elevation="0" class="stepper-card">
           <v-stepper v-model="step" alt-labels>
             <v-stepper-header>
-              <v-stepper-step :complete="step > 1" step="1">
+              <v-stepper-step :complete="isStep1Complete" step="1">
                 Your details <br> Name and email
               </v-stepper-step>
               <v-divider />
-              <v-stepper-step :complete="step > 2" step="2">
+              <v-stepper-step :complete="isStep2Complete" step="2">
                 Choose a password <br> Choose a secure password
               </v-stepper-step>
               <v-divider />
-              <v-stepper-step :complete="step > 3" step="3">
+              <v-stepper-step :complete="isStep3Complete" step="3">
                 Invite your team <br> Start collaborating
               </v-stepper-step>
               <v-divider />
-              <v-stepper-step :complete="step > 4" step="4">
+              <v-stepper-step :complete="isStep4Complete" step="4">
                 Additional Information <br> Provide more details
               </v-stepper-step>
             </v-stepper-header>
@@ -247,7 +253,30 @@ export default {
       ]
     }
   },
+  computed: {
+    isStep1Complete () {
+      return !!this.adminName && !!this.schoolName && !!this.schoolEmail
+    },
+    isStep2Complete () {
+      return !!this.password && !!this.confirmPassword
+    },
+    isStep3Complete () {
+      return !!this.staffNumber && !!this.schoolAddress
+    },
+    isStep4Complete () {
+      return !!this.staffNumber && !!this.schoolAddress
+    }
+  },
   methods: {
+    nextStep (currentStep) {
+      if (currentStep === 1 && this.isStep1Complete) {
+        this.step = 2
+      } else if (currentStep === 2 && this.isStep2Complete) {
+        this.step = 3
+      } else if (currentStep === 3 && this.isStep3Complete) {
+        this.step = 4
+      }
+    },
     signupUser () {
       const sendData = {
         adminName: this.adminName,
