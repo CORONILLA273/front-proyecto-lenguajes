@@ -67,29 +67,31 @@
 export default {
   data () {
     return {
-      email: '',
-      password: '',
+      email: null,
+      password: null,
 
       showPassword: true
     }
   },
   methods: {
-    async login () {
-      try {
-        const response = await this.$axios.post('/api/auth/login', {
-          email: this.email,
-          password: this.password
-        })
-        if (response.data.token) {
-          console.log('Login successful', response.data.token)
-        }
-      } catch (error) {
-        if (error.response) {
-          console.error('Error response:', error.response.data)
-        } else {
-          console.error('Error', error.message)
-        }
+    login () {
+      const sendData = {
+        email: this.email,
+        password: this.password
       }
+      const url = 'api/auth/login'
+      console.log('@@ sendData => ', sendData)
+      this.$axios.post(url, sendData)
+        .then((res) => {
+          console.log('@@ res => ', res)
+          if (res.data.token) {
+            localStorage.setItem('token', res.data.token)
+            this.$router.push('/dashboard')
+          }
+        })
+        .catch((err) => {
+          console.log('@@ err => ', err)
+        })
     },
     signupUser () {
       // Lógica de registro de usuario
