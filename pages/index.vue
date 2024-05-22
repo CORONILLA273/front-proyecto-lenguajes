@@ -192,6 +192,12 @@
     </v-footer>
   </v-app>
 </template>
+<script>
+export default {
+  layout: 'no-sideBar'
+}
+
+</script>
 
 <style>
 .v-app-bar .v-btn {
