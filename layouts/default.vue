@@ -7,8 +7,9 @@
       fixed
       app
       color="#152259"
-      permanent
-      style="width: 242px; height: 789px; left: 1px"
+      :permanent="$vuetify.breakpoint.lgAndUp"
+      :temporary="$vuetify.breakpoint.mdAndDown"
+      style="width: 242px; height: 100vh; left: 1px"
     >
       <v-list dense>
         <v-list-item>
@@ -32,8 +33,8 @@
           </v-list-item-content>
         </v-list-item>
         <v-list-item
-          v-for="(item, i) in items"
-          :key="i"
+          v-for="(item) in items"
+          :key="item.id"
           :to="item.to"
           router
           exact
@@ -51,8 +52,8 @@
           </v-list-item-content>
         </v-list-item>
         <v-list-item
-          v-for="(item, i) in items2"
-          :key="i"
+          v-for="(item) in items2"
+          :key="item.id"
           :to="item.to"
           router
           exact
@@ -72,6 +73,11 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
+    <v-app-bar v-show="$vuetify.breakpoint.mdAndDown" app>
+      <v-app-bar-nav-icon
+        @click.stop="drawer = !drawer"
+      />
+    </v-app-bar>
     <v-main>
       <v-container>
         <Nuxt />
@@ -90,35 +96,42 @@ export default {
       fixed: false,
       items: [
         {
+          id: 1,
           icon: require('~/assets/sideBar/home-2.png'),
           title: 'Dashboard',
           to: '/dashboard'
         },
         {
+          id: 2,
           icon: require('~/assets/sideBar/home-2.png'),
           title: 'Teachers',
           to: '/dashboard/maestros'
         },
         {
+          id: 3,
           icon: require('~/assets/sideBar/school.png'),
           title: 'Students/ Classes',
           to: '/dashboard/alumnos'
         },
         {
+          id: 4,
           icon: require('~/assets/sideBar/Billing.png'),
           title: 'Billing'
         },
         {
+          id: 5,
           icon: require('~/assets/sideBar/Settings.png'),
           title: 'Settings and profile'
         },
         {
+          id: 6,
           icon: require('~/assets/sideBar/Exams.png'),
           title: 'Exams'
         }
       ],
       items2: [
         {
+          id: 7,
           icon: require('~/assets/sideBar/Billing.png'),
           title: 'Features',
           new: true
@@ -140,6 +153,20 @@ export default {
 </script>
 
 <style>
+
+@media (max-width: 960px) {
+  .list-item-hover:hover, .list-item-active {
+    width: 100%; /* Adaptar la anchura al 100% para dispositivos pequeños */
+  }
+}
+
+/* Estilos para dispositivos medianos */
+@media (min-width: 961px) and (max-width: 1264px) {
+  .list-item-hover:hover, .list-item-active {
+    width: 150px; /* Anchura intermedia para tablets */
+  }
+}
+
 .list-item-hover:hover {
   background-color: #509CDB;
   width: 200px;
