@@ -91,7 +91,7 @@ export default {
           console.log('@@ res => ', res)
           if (res.data.token) {
             localStorage.setItem('token', res.data.token)
-            this.$router.push('/home')
+            this.$router.push('/dashboard')
           }
         })
         .catch((err) => {
