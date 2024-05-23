@@ -386,7 +386,4 @@ export default {
     margin-right: -8px; /* Overlapping avatars slightly */
   }
 
-  .my-separator {
-    margin-top: 50px; /* Adjust the margin as needed for visual separation */
-  }
 </style>
