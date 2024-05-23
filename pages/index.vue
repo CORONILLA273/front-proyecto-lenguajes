@@ -31,7 +31,7 @@
       <v-spacer /> <!-- Espaciador después de los botones para centrar -->
 
       <!-- Right Button -->
-      <v-btn class="button-text-transform sign-up-btn" href="#">
+      <v-btn class="button-text-transform sign-up-btn" @click="redirectLogin">
         Login
       </v-btn>
     </v-app-bar>
@@ -578,6 +578,16 @@
     </v-footer>
   </v-app>
 </template>
+
+<script>
+export default {
+  methods: {
+    redirectLogin () {
+      this.$router.push('/login')
+    }
+  }
+}
+</script>
 
 <style>
 .consultation-container {
