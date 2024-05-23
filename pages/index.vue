@@ -581,7 +581,6 @@
 
 <script>
 export default {
-  layout: 'no-sideBar',
   methods: {
     redirectLogin () {
       this.$router.push('/login')
