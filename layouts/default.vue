@@ -142,6 +142,13 @@ export default {
       rightDrawer: false,
       title: 'Vuetify.js'
     }
+  },
+  methods: {
+    handleItem (item) {
+      if (!item.to) {
+        //
+      }
+    }
   }
 }
 </script>
