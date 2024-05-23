@@ -231,6 +231,7 @@
 
 <script>
 export default {
+  layout: 'no-sideBar',
   data () {
     return {
       adminName: null,
