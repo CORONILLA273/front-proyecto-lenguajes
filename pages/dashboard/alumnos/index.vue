@@ -16,81 +16,85 @@
       />
     </v-row>
     <v-dialog v-model="showNuevo" width="400" persistent>
-      <v-card-title>
-        <v-card-title>Add Students</v-card-title>
-        <v-card-text>
-          <v-form ref="from" v-model="validForm">
-            <v-text-field
-              v-model="studentName"
-              :rules="[v => !!v || 'Field is required']"
-              class="fixed-width"
-              outlined
-              placeholder="Enter the name of student"
-              type="text"
-            />
-            <v-text-field
-              v-model="schoolEmailStu"
-              :rules="emailValidation"
-              class="fixed-width"
-              outlined
-              placeholder="Enter the school email"
-              type="email"
-            />
-            <v-text-field
-              v-model="phoneNumberStu"
-              :rules="[v => !!v || 'Field is required']"
-              class="fixed-width"
-              outlined
-              placeholder="Enter the Phone number"
-              type="text"
-            />
-            <v-text-field
-              v-model="passwordStu"
-              :rules="passwordValidation"
-              :type="showPassword ? 'password' : 'text'"
-              label="Password"
-              outlined
-              class="fixed-width"
-              :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-              @click:append="togglePasswordVisibility"
-            />
-            <v-text-field
-              v-model="classNameStu"
-              :rules="[v => !!v || 'Field is required']"
-              class="fixed-width"
-              outlined
-              placeholder="Enter the Class"
-              type="text"
-            />
-            <v-text-field
-              v-model="genderNameStu"
-              :rules="[v => !!v || 'Field is required']"
-              class="fixed-width"
-              outlined
-              placeholder="Enter the Gender"
-              type="text"
-            />
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-row>
-            <v-col cols="6">
-              <v-btn block color="primary" @click="agregar">
-                <span style="color: white; text-transform: none;">
-                  Add student
-                </span>
-              </v-btn>
-            </v-col>
-            <v-col cols="6">
-              <v-btn block color="green" @click="borrar">
-                <span style="color: white; text-transform: none;">
-                  Add Another
-                </span>
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-card-actions>
-      </v-card-title>
+      <v-card-title>Add Students</v-card-title>
+      <v-card-text>
+        <v-form ref="form" v-model="validForm">
+          <v-text-field
+            v-model="studentName"
+            :rules="[v => !!v || 'Field is required']"
+            class="fixed-width"
+            outlined
+            placeholder="Enter the name of student"
+            type="text"
+          />
+          <v-text-field
+            v-model="schoolEmailStu"
+            :rules="emailValidation"
+            class="fixed-width"
+            outlined
+            placeholder="Enter the school email"
+            type="email"
+          />
+          <v-text-field
+            v-model="phoneNumberStu"
+            :rules="[v => !!v || 'Field is required']"
+            class="fixed-width"
+            outlined
+            placeholder="Enter the Phone number"
+            type="text"
+          />
+          <v-text-field
+            v-model="passwordStu"
+            :rules="passwordValidation"
+            class="fixed-width"
+            outlined
+            placeholder="Enter the password"
+            type="password"
+          />
+          <v-text-field
+            v-model="classNameStu"
+            :rules="[v => !!v || 'Field is required']"
+            class="fixed-width"
+            outlined
+            placeholder="Enter the Class"
+            type="text"
+          />
+          <v-text-field
+            v-model="genderNameStu"
+            :rules="[v => !!v || 'Field is required']"
+            class="fixed-width"
+            outlined
+            placeholder="Enter the Gender"
+            type="text"
+          />
+          <v-text-field
+            v-model="ageNumStu"
+            :rules="[v => !!v || 'Field is required']"
+            class="fixed-width"
+            outlined
+            placeholder="Enter the age"
+            type="text"
+          />
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-row>
+          <v-col cols="6">
+            <v-btn block color="primary" @click="agregar">
+              <span style="color: white; text-transform: none;">
+                Add student
+              </span>
+            </v-btn>
+          </v-col>
+          <v-col cols="6">
+            <v-btn block color="green" @click="borrar">
+              <span style="color: white; text-transform: none;">
+                Add Another
+              </span>
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-card-actions>
     </v-dialog>
   </v-col>
 </template>
@@ -135,12 +139,14 @@ export default {
       estudiantes: [],
       showNuevo: false,
       validForm: false,
+      // Space
       studentName: null,
       schoolEmailStu: null,
       phoneNumberStu: null,
       passwordStu: null,
       classNameStu: null,
       genderNameStu: null,
+      ageNumStu: null,
 
       passwordValidation: [
         v => (v && v.length > 8) || 'Password must have be more than 8 chars'
@@ -152,6 +158,7 @@ export default {
   },
   mounted () {
     this.token = localStorage.getItem('token')
+    console.log(this.token)
     if (!this.token) {
       this.$router.push('/')
     }
@@ -165,6 +172,7 @@ export default {
           Authorization: `Bearer ${this.token}`
         }
       }
+      console.log(config)
       this.$axios.get(url, config)
         .then((res) => {
           console.log('@@ res => ', res)
@@ -183,19 +191,29 @@ export default {
       this.validForm = this.$refs.form.validate()
       if (this.validForm) {
         const sendData = {
-          id: Date.now(),
-          nameStu: this.nameStu,
-          emailStu: this.emailStu,
-          classStu: this.classStu,
-          genderStu: this.genderStu,
-          phoneStu: this.phoneStu,
-          passwordStu: this.hashedPasswordStu
+          id: Date.now().toString(),
+          nameStu: this.studentName,
+          emailStu: this.schoolEmailStu,
+          classStu: this.classNameStu,
+          genderStu: this.genderNameStu,
+          phoneStu: this.phoneNumberStu,
+          passwordStu: this.passwordStu,
+          ageStu: this.ageNumStu
         }
         console.log('@@@ data => ', sendData)
-        const url = '/signup'
-        this.$axios.post(url, sendData)
+        const config = {
+          headers: {
+            Authorization: `Bearer ${this.token}`
+          }
+        }
+        const url = '/api/auth/registrar-estudiante'
+        this.$axios.post(url, sendData, config)
           .then((res) => {
             console.log('@@@ res => ', res)
+            if (res.data.message === 'Estudiante Registrado Satisfactoriamente') {
+              this.getAllStudents()
+              this.showNuevo = false
+            }
           })
           .catch((err) => {
             console.log('@@@ err => ', err)
