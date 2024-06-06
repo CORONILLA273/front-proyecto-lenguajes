@@ -1,20 +1,66 @@
 <template>
-  <v-col cols="12">
-    <v-row>
-      <v-btn block color="blue" @click="showNuevo = true">
-        <span style="color: white; text-transform: none;">
-          Add Students
-        </span>
-      </v-btn>
-    </v-row>
-    <v-row class="mt-3">
-      <v-data-table
-        :headers="headers"
-        :items="estudiantes"
-        elevation="0"
-        style="width: 100% !important;"
-      />
-    </v-row>
+  <v-row>
+    <v-col cols="8">
+      <v-row class="mt-3">
+        <v-data-table
+          :headers="headers"
+          :items="estudiantes"
+          elevation="0"
+          style="width: 100% !important;"
+          hide-default-header
+          hide-default-footer
+          item-value="id"
+          class="custom-table"
+          disable-pagination
+          :items-per-page="-1"
+        >
+          <template #item="{ item, index }">
+            <tr
+              :class="{'row-hover': hoveredRow === index, 'row-selected': selectedRow === item.id}"
+              @mouseover="hoveredRow = index"
+              @mouseleave="hoveredRow = null"
+              @click="selectRow(item)"
+            >
+              <td class="custom-cell">
+                <div class="custom-cell-content">
+                  <img :src="getAvatarUrl(item.id)" alt="avatar" class="avatar">
+                  <span>{{ item.nameStu }}</span>
+                </div>
+              </td>
+              <td class="custom-cell">
+                {{ item.id }}
+              </td>
+              <td class="custom-cell">
+                {{ item.emailStu }}
+              </td>
+              <td class="custom-cell">
+                {{ item.classStu }}
+              </td>
+              <td class="custom-cell">
+                {{ item.genderStu }}
+              </td>
+            </tr>
+          </template>
+          <template #header="{ props }">
+            <tr class="custom-header">
+              <th v-for="header in props.headers" :key="header.text" class="custom-header-cell">
+                {{ header.text }}
+              </th>
+            </tr>
+          </template>
+        </v-data-table>
+      </v-row>
+    </v-col>
+    <v-col cols="4">
+      <v-card v-if="selectedStudent" class="mx-auto" max-width="400">
+        <v-card-title>{{ selectedStudent.id }}</v-card-title>
+        <v-card-text>
+          <div style="text-align: center;">
+            <img :src="getAvatarUrl(selectedStudent.id)" alt="avatar" class="avatar" style="width: 100px; height: 100px;">
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-col>
     <v-dialog v-model="showNuevo" width="400" persistent>
       <v-card-title>Add Students</v-card-title>
       <v-card-text>
@@ -96,7 +142,7 @@
         </v-row>
       </v-card-actions>
     </v-dialog>
-  </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -105,41 +151,40 @@ export default {
     return {
       headers: [
         {
-          text: 'Name', // Esto es para el texto del encabezado
-          align: 'left', // Esto es para alinearlo
-          sortable: true, // esto es ordenar descedente y ascedente
-          value: 'nameStu' // Esto es para el nombred el elemento que viene en la base de datos.
+          text: 'Name',
+          align: 'left',
+          sortable: true,
+          value: 'nameStu'
         },
         {
-          text: 'Student ID', // Esto es para el texto del encabezado
-          align: 'left', // Esto es para alinearlo
-          sortable: true, // esto es ordenar descedente y ascedente
-          value: 'id' // Esto es para el nombred el elemento que viene en la base de datos.
+          text: 'Student ID',
+          align: 'left',
+          sortable: true,
+          value: 'id'
         },
         {
-          text: 'Email Address', // Esto es para el texto del encabezado
-          align: 'left', // Esto es para alinearlo
-          sortable: true, // esto es ordenar descedente y ascedente
-          value: 'emailStu' // Esto es para el nombred el elemento que viene en la base de datos.
+          text: 'Email Address',
+          align: 'left',
+          sortable: true,
+          value: 'emailStu'
         },
         {
-          text: 'Class', // Esto es para el texto del encabezado
-          align: 'left', // Esto es para alinearlo
-          sortable: true, // esto es ordenar descedente y ascedente
-          value: 'classStu' // Esto es para el nombred el elemento que viene en la base de datos.
+          text: 'Class',
+          align: 'left',
+          sortable: true,
+          value: 'classStu'
         },
         {
-          text: 'Gender', // Esto es para el texto del encabezado
-          align: 'left', // Esto es para alinearlo
-          sortable: true, // esto es ordenar descedente y ascedente
-          value: 'genderStu' // Esto es para el nombred el elemento que viene en la base de datos.
+          text: 'Gender',
+          align: 'left',
+          sortable: true,
+          value: 'genderStu'
         }
       ],
       token: null,
       estudiantes: [],
       showNuevo: false,
       validForm: false,
-      // Space
       studentName: null,
       schoolEmailStu: null,
       phoneNumberStu: null,
@@ -147,6 +192,9 @@ export default {
       classNameStu: null,
       genderNameStu: null,
       ageNumStu: null,
+      hoveredRow: null,
+      selectedRow: null,
+      selectedStudent: null, // Estudiante seleccionado
 
       passwordValidation: [
         v => (v && v.length > 8) || 'Password must have be more than 8 chars'
@@ -158,7 +206,6 @@ export default {
   },
   mounted () {
     this.token = localStorage.getItem('token')
-    console.log(this.token)
     if (!this.token) {
       this.$router.push('/')
     }
@@ -172,10 +219,8 @@ export default {
           Authorization: `Bearer ${this.token}`
         }
       }
-      console.log(config)
       this.$axios.get(url, config)
         .then((res) => {
-          console.log('@@ res => ', res)
           if (res.data.message === 'Success') {
             this.estudiantes = res.data.students
           } else if (res.data.message === 'Invalid Token') {
@@ -184,8 +229,27 @@ export default {
         })
         .catch((err) => {
           this.$router.push('/')
-          console.log('@@@ err => ', err)
+          console.log(err)
         })
+    },
+    getAvatarUrl (id) {
+      const hash = this.hashCode(id)
+      const avatarId = hash % 70
+      return `https://i.pravatar.cc/208?img=${avatarId + 1}`
+    },
+    hashCode (str) {
+      let hash = 0
+      for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i)
+        hash = (hash * 32) - hash + char
+        hash |= 0
+      }
+      return Math.abs(hash)
+    },
+    selectRow (student) {
+      this.selectedRow = student.id
+      this.selectedStudent = student
+      this.hoveredRow = null
     },
     agregar () {
       this.validForm = this.$refs.form.validate()
@@ -200,7 +264,6 @@ export default {
           passwordStu: this.passwordStu,
           ageStu: this.ageNumStu
         }
-        console.log('@@@ data => ', sendData)
         const config = {
           headers: {
             Authorization: `Bearer ${this.token}`
@@ -209,14 +272,13 @@ export default {
         const url = '/api/auth/registrar-estudiante'
         this.$axios.post(url, sendData, config)
           .then((res) => {
-            console.log('@@@ res => ', res)
             if (res.data.message === 'Estudiante Registrado Satisfactoriamente') {
               this.getAllStudents()
               this.showNuevo = false
             }
           })
           .catch((err) => {
-            console.log('@@@ err => ', err)
+            console.log(err)
           })
       } else {
         alert('Faltan Datos')
@@ -225,3 +287,66 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@400;700&display=swap');
+
+.custom-table {
+  padding: 16px;
+  font-family: 'Kumbh Sans', sans-serif;
+  color: #4F4F4F;
+}
+
+.custom-header {
+  background-color: #f5f5f5; /* Puedes ajustar el color de fondo si lo deseas */
+}
+
+.custom-header-cell {
+  font-weight: bold;
+  padding: 16px;
+  text-align: left;
+  font-size: 14px; /* Ajusta el tamaño de la letra aquí */
+  color: #4F4F4F;
+}
+
+.custom-cell {
+  color: #4F4F4F;
+}
+
+.custom-cell-content {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.cell-text {
+  color: inherit; /* Inherit color from parent */
+}
+
+.row-hover {
+  background-color: #D5E7F6 !important; /* Azul claro para el hover */
+}
+
+.row-selected {
+  background-color: #509CDB !important; /* Azul claro para la selección */
+  color: white !important; /* Color del texto blanco */
+}
+
+.row-selected .custom-cell,
+.row-selected .custom-cell .cell-text {
+  color: white !important; /* Asegura que el texto de las celdas sea blanco */
+}
+
+.v-data-table tbody tr {
+  cursor: pointer;
+  color: #4F4F4F;
+  height: 55px; /* Aumentar la altura de cada fila */
+  line-height: 55px; /* Ajustar la altura de línea para centrar el contenido verticalmente */
+}
+</style>
