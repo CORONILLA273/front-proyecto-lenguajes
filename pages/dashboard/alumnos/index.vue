@@ -1,6 +1,13 @@
 <template>
   <v-row>
     <v-col cols="8">
+      <v-row>
+        <v-btn block color="blue" @click="showNuevo = true">
+          <span style="color: white; text-transform: none;">
+            Add Students
+          </span>
+        </v-btn>
+      </v-row>
       <v-row class="mt-3">
         <v-data-table
           :headers="headers"
@@ -53,10 +60,18 @@
     </v-col>
     <v-col cols="4">
       <v-card v-if="selectedStudent" class="mx-auto" max-width="400">
-        <v-card-title>{{ selectedStudent.id }}</v-card-title>
-        <v-card-text>
+        <v-card-title class="text-center">
+          <div class="text-center" style="width: 95%; font-size: 16px; color: #424242;">
+            {{ selectedStudent.id }}
+          </div>
+        </v-card-title>
+        <v-card-text class="text-center">
           <div style="text-align: center;">
-            <img :src="getAvatarUrl(selectedStudent.id)" alt="avatar" class="avatar" style="width: 100px; height: 100px;">
+            <img :src="getAvatarUrl(selectedStudent.id)" alt="avatar" class="avatar" style="width: 180px; height: 180px;">
+            <div style="font-weight: bold; font-size: 16px; color:#1A1A1A">
+              {{ selectedStudent.nameStu }}
+            </div>
+            <div>{{ selectedStudent.classStu }}</div>
           </div>
         </v-card-text>
       </v-card>
