@@ -1,188 +1,255 @@
 <template>
-  <v-row>
-    <v-col cols="12">
-      <v-btn block color="blue" @click="showNuevo = true">
-        <span style="color: white; text-transform: none;">
-          Add Students
-        </span>
-      </v-btn>
-    </v-col>
-    <v-col cols="8">
-      <v-data-table
-        :headers="headers"
-        :items="estudiantes"
-        elevation="0"
-        style="width: 100% !important;"
-        hide-default-header
-        hide-default-footer
-        item-value="id"
-        class="custom-table"
-        disable-pagination
-        :items-per-page="-1"
-      >
-        <template #item="{ item, index }">
-          <tr
-            :class="{'row-hover': hoveredRow === index, 'row-selected': selectedRow === item.id}"
-            @mouseover="hoveredRow = index"
-            @mouseleave="hoveredRow = null"
-            @click="selectRow(item)"
+  <v-app>
+    <v-container>
+      <v-toolbar flat>
+        <v-btn text color="blue" style="margin-right: 10px;">
+          <span style="color: blue; text-transform: none;">
+            Export CSV
+          </span>
+        </v-btn>
+        <v-btn color="blue" @click="showNuevo = true">
+          <span style="color: white; text-transform: none;">
+            Add Students
+          </span>
+        </v-btn>
+        <v-spacer />
+        <v-icon left>
+          mdi-bell
+        </v-icon>
+        <v-btn text color="blue" style="text-align: right; margin-right: 50px;">
+          <span style="color: black; text-transform: none;">
+            Log out
+          </span>
+        </v-btn>
+      </v-toolbar>
+
+      <v-row class="mt-3">
+        <v-col cols="1" style="margin-left: 20px;">
+          <v-select
+            v-model="filter"
+            :items="filterOptions"
+            label="Filter"
+            outlined
+            dense
+          />
+        </v-col>
+        <v-col cols="6">
+          <v-text-field
+            v-model="search"
+            prepend-inner-icon="mdi-magnify"
+            label="Search for a student by name or email"
+            outlined
+            hide-details
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="8">
+          <v-data-table
+            :headers="headers"
+            :items="filteredStudents"
+            elevation="0"
+            style="width: 100% !important;"
+            hide-default-header
+            hide-default-footer
+            item-value="id"
+            class="custom-table"
+            disable-pagination
+            :items-per-page="-1"
           >
-            <td class="custom-cell">
-              <div class="custom-cell-content">
-                <img :src="getAvatarUrl(item.id)" alt="avatar" class="avatar">
-                <span>{{ item.nameStu }}</span>
+            <template #item="{ item, index }">
+              <tr
+                :class="{'row-hover': hoveredRow === index, 'row-selected': selectedRow === item.id}"
+                @mouseover="hoveredRow = index"
+                @mouseleave="hoveredRow = null"
+                @click="selectRow(item)"
+              >
+                <td class="custom-cell">
+                  <div class="custom-cell-content">
+                    <img :src="getAvatarUrl(item.id)" alt="avatar" class="avatar">
+                    <span>{{ item.nameStu }}</span>
+                  </div>
+                </td>
+                <td class="custom-cell">
+                  {{ item.id }}
+                </td>
+                <td class="custom-cell">
+                  {{ item.emailStu }}
+                </td>
+                <td class="custom-cell">
+                  {{ item.classStu }}
+                </td>
+                <td class="custom-cell">
+                  {{ item.genderStu }}
+                </td>
+              </tr>
+            </template>
+            <template #header="{ props }">
+              <tr class="custom-header">
+                <th v-for="header in props.headers" :key="header.text" class="custom-header-cell">
+                  {{ header.text }}
+                </th>
+              </tr>
+            </template>
+          </v-data-table>
+        </v-col>
+
+        <v-col cols="4">
+          <v-card v-if="selectedStudent" class="mx-auto" max-width="313" flat>
+            <v-card-title class="text-center">
+              <div class="text-center" style="width: 95%; font-size: 16px; color: #424242; font-weight: 500;">
+                {{ selectedStudent.id }}
               </div>
-            </td>
-            <td class="custom-cell">
-              {{ item.id }}
-            </td>
-            <td class="custom-cell">
-              {{ item.emailStu }}
-            </td>
-            <td class="custom-cell">
-              {{ item.classStu }}
-            </td>
-            <td class="custom-cell">
-              {{ item.genderStu }}
-            </td>
-          </tr>
-        </template>
-        <template #header="{ props }">
-          <tr class="custom-header">
-            <th v-for="header in props.headers" :key="header.text" class="custom-header-cell">
-              {{ header.text }}
-            </th>
-          </tr>
-        </template>
-      </v-data-table>
-    </v-col>
-    <v-col cols="4">
-      <v-card v-if="selectedStudent" class="mx-auto" max-width="313" flat>
-        <v-card-title class="text-center">
-          <div class="text-center" style="width: 95%; font-size: 16px; color: #424242; font-weight: 500;">
-            {{ selectedStudent.id }}
-          </div>
-        </v-card-title>
-        <v-card-text class="text-center">
-          <div style="text-align: center;">
-            <img :src="getAvatarUrl(selectedStudent.id)" alt="avatar" class="avatar" style="width: 180px; height: 180px; font-size: 16px;">
-            <div style="font-weight: 700; font-size: 16px; color:#1A1A1A; padding-top: 15px; padding-bottom: 6px;">
-              {{ selectedStudent.nameStu }}
-            </div>
-            <div>{{ selectedStudent.classStu }}</div>
-            <div class="icons" style="padding-top: 14px; padding-bottom: 30px;">
-              <img :src="teacherIcon" alt="Teacher" class="icon">
-              <img :src="callCallingIcon" alt="Call Calling" class="icon">
-              <img :src="smsIcon" alt="SMS" class="icon">
-            </div>
-            <div class="about-section" style="color: black; font-size: 12px; padding-bottom: 100px;">
-              About
-            </div>
-            <div class="info-section">
-              <div class="info-item">
-                <div class="info-label">
-                  Age
+            </v-card-title>
+            <v-card-text class="text-center">
+              <div style="text-align: center;">
+                <img :src="getAvatarUrl(selectedStudent.id)" alt="avatar" class="avatar" style="width: 180px; height: 180px; font-size: 16px;">
+                <div style="font-weight: 700; font-size: 16px; color:#1A1A1A; padding-top: 15px; padding-bottom: 6px;">
+                  {{ selectedStudent.nameStu }}
                 </div>
-                <div style="font-size: 14px; font-weight: 500;">
-                  {{ selectedStudent.ageStu }}
+                <div>{{ selectedStudent.classStu }}</div>
+                <div class="icons" style="padding-top: 14px; padding-bottom: 30px;">
+                  <img :src="teacherIcon" alt="Teacher" class="icon">
+                  <img :src="callCallingIcon" alt="Call Calling" class="icon">
+                  <img :src="smsIcon" alt="SMS" class="icon">
+                </div>
+                <div class="about-section" style="color: black; font-size: 12px; padding-bottom: 100px;">
+                  About
+                </div>
+                <div class="info-section">
+                  <div class="info-item">
+                    <div class="info-label">
+                      Age
+                    </div>
+                    <div style="font-size: 14px; font-weight: 500;">
+                      {{ selectedStudent.ageStu }}
+                    </div>
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">
+                      Gender
+                    </div>
+                    <div>{{ selectedStudent.genderStu }}</div>
+                  </div>
+                </div>
+                <div class="about-section" style="color: black; font-size: 12px;">
+                  People from the same class
                 </div>
               </div>
-              <div class="info-item">
-                <div class="info-label">
-                  Gender
-                </div>
-                <div>{{ selectedStudent.genderStu }}</div>
-              </div>
-            </div>
-            <div class="about-section" style="color: black; font-size: 12px;">
-              People from the same class
-            </div>
-          </div>
-        </v-card-text>
-      </v-card>
-    </v-col>
-    <v-dialog v-model="showNuevo" width="400" persistent>
-      <v-card-title>Add Students</v-card-title>
-      <v-card-text>
-        <v-form ref="form" v-model="validForm">
-          <v-text-field
-            v-model="studentName"
-            :rules="[v => !!v || 'Field is required']"
-            class="fixed-width"
-            outlined
-            placeholder="Enter the name of student"
-            type="text"
-          />
-          <v-text-field
-            v-model="schoolEmailStu"
-            :rules="emailValidation"
-            class="fixed-width"
-            outlined
-            placeholder="Enter the school email"
-            type="email"
-          />
-          <v-text-field
-            v-model="phoneNumberStu"
-            :rules="[v => !!v || 'Field is required']"
-            class="fixed-width"
-            outlined
-            placeholder="Enter the Phone number"
-            type="text"
-          />
-          <v-text-field
-            v-model="passwordStu"
-            :rules="passwordValidation"
-            class="fixed-width"
-            outlined
-            placeholder="Enter the password"
-            type="password"
-          />
-          <v-text-field
-            v-model="classNameStu"
-            :rules="[v => !!v || 'Field is required']"
-            class="fixed-width"
-            outlined
-            placeholder="Enter the Class"
-            type="text"
-          />
-          <v-text-field
-            v-model="genderNameStu"
-            :rules="[v => !!v || 'Field is required']"
-            class="fixed-width"
-            outlined
-            placeholder="Enter the Gender"
-            type="text"
-          />
-          <v-text-field
-            v-model="ageNumStu"
-            :rules="[v => !!v || 'Field is required']"
-            class="fixed-width"
-            outlined
-            placeholder="Enter the age"
-            type="text"
-          />
-        </v-form>
-      </v-card-text>
-      <v-card-actions>
-        <v-row>
-          <v-col cols="6">
-            <v-btn block color="primary" @click="agregar">
-              <span style="color: white; text-transform: none;">
-                Add student
-              </span>
-            </v-btn>
-          </v-col>
-          <v-col cols="6">
-            <v-btn block color="green" @click="borrar">
-              <span style="color: white; text-transform: none;">
-                Add Another
-              </span>
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-card-actions>
-    </v-dialog>
-  </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+
+        <v-dialog v-model="showNuevo" max-width="1100" persistent @click:outside="closeDialog">
+          <v-card style="overflow: hidden; width: 100%; height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 50px;">
+            <v-card-title class="text-h4" style="text-align: left; width: 100%;">
+              &nbsp;&nbsp;Add Students
+            </v-card-title>
+            <v-card-title class="text-h5" style="text-align: left; width: 100%; margin-bottom: 20px;">
+              &nbsp;&nbsp;&nbsp;Manually&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Import CSV
+            </v-card-title>
+            <v-card-text style="width: 100%; display: flex; justify-content: left;">
+              <v-form ref="form" v-model="validForm" style="width: 80%;">
+                <v-container>
+                  <v-row>
+                    <v-col cols="4">
+                      Name
+                      <v-text-field
+                        v-model="studentName"
+                        :rules="[v => !!v || 'Field is required']"
+                        outlined
+                        type="text"
+                        style="margin-bottom: 20px;"
+                      />
+                    </v-col>
+                    <v-col cols="4">
+                      <v-select
+                        v-model="classNameStu"
+                        :rules="[v => !!v || 'Field is required']"
+                        outlined
+                        placeholder="Class"
+                        :items="['JSS 1', 'JSS 2', 'JSS 3', 'SS 1', 'SS 2', 'SS 3']"
+                        style="margin-bottom: 20px; margin-left: 20px;"
+                      />
+                    </v-col>
+                    <v-col cols="4">
+                      <v-select
+                        v-model="genderNameStu"
+                        :rules="[v => !!v || 'Field is required']"
+                        outlined
+                        placeholder="Gender"
+                        :items="['Male', 'Female', 'Other']"
+                        style="margin-bottom: 20px; margin-left: 20px;"
+                      />
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="6">
+                      Email address
+                      <v-text-field
+                        v-model="schoolEmailStu"
+                        :rules="emailValidation"
+                        outlined
+                        type="email"
+                        style="margin-bottom: 20px;"
+                      />
+                    </v-col>
+                    <v-col cols="6">
+                      Phone number
+                      <v-text-field
+                        v-model="phoneNumberStu"
+                        :rules="[v => !!v || 'Field is required']"
+                        outlined
+                        type="text"
+                        style="margin-bottom: 20px;"
+                      />
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="6">
+                      Password
+                      <v-text-field
+                        v-model="passwordStu"
+                        :rules="passwordValidation"
+                        outlined
+                        type="password"
+                        style="margin-bottom: 20px;"
+                      />
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-form>
+            </v-card-text>
+
+            <v-card-actions style="width: 100%; display: flex; justify-content: center; margin-left: 40px;">
+              <v-row style="width: 80%;">
+                <v-col cols="2">
+                  <v-btn
+                    plain
+                    block
+                    color="white"
+                    style="border: none; display: flex; align-items: center; justify-content: center;"
+                    @click="addAnother"
+                  >
+                    <span style="color: black; text-transform: none;">
+                      + Add Another
+                    </span>
+                  </v-btn>
+                </v-col>
+                <v-col cols="2">
+                  <v-btn flat block color="#d3d3d3" style="border: none; display: flex; align-items: center; justify-content: center;" @click="agregar">
+                    <span style="color: black; text-transform: none;">
+                      Add student
+                    </span>
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-row>
+    </v-container>
+  </v-app>
 </template>
 
 <script>
@@ -227,6 +294,8 @@ export default {
       ],
       token: null,
       estudiantes: [],
+      search: '', // Agregar esta línea
+      filterOptions: ['Option1', 'Option2'], // Agregar opciones de filtro
       showNuevo: false,
       validForm: false,
       studentName: null,
@@ -251,6 +320,17 @@ export default {
       emailValidation: [
         v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
       ]
+    }
+  },
+  computed: {
+    filteredStudents () {
+      const searchTerm = this.search.toLowerCase()
+      return this.estudiantes.filter((student) => {
+        return (
+          student.nameStu.toLowerCase().includes(searchTerm) ||
+          student.emailStu.toLowerCase().includes(searchTerm)
+        )
+      })
     }
   },
   mounted () {
@@ -295,6 +375,9 @@ export default {
       }
       return Math.abs(hash)
     },
+    closeDialog () {
+      this.showNuevo = false
+    },
     selectRow (student) {
       this.selectedRow = student.id
       this.selectedStudent = student
@@ -328,6 +411,48 @@ export default {
           })
           .catch((err) => {
             console.log(err)
+          })
+      } else {
+        alert('Faltan Datos')
+      }
+    },
+    addAnother () {
+      this.validForm = this.$refs.form.validate()
+      if (this.validForm) {
+        const sendData = {
+          id: Date.now().toString(),
+          nameStu: this.studentName,
+          emailStu: this.schoolEmailStu,
+          classStu: this.classNameStu,
+          genderStu: this.genderNameStu,
+          phoneStu: this.phoneNumberStu,
+          passwordStu: this.passwordStu,
+          ageStu: this.ageNumStu
+        }
+        console.log('@@@ data => ', sendData)
+        const config = {
+          headers: {
+            Authorization: `Bearer ${this.token}`
+          }
+        }
+        const url = '/api/auth/registrar-estudiante'
+        this.$axios.post(url, sendData, config)
+          .then((res) => {
+            console.log('@@@ res => ', res)
+            if (res.data.message === 'Estudiante Registrado Satisfactoriamente') {
+              this.getAllStudents()
+              // Limpiar los campos del formulario
+              this.studentName = ''
+              this.classNameStu = ''
+              this.genderNameStu = ''
+              this.schoolEmailStu = ''
+              this.phoneNumberStu = ''
+              this.passwordStu = ''
+              this.ageNumStu = ''
+            }
+          })
+          .catch((err) => {
+            console.log('@@@ err => ', err)
           })
       } else {
         alert('Faltan Datos')
