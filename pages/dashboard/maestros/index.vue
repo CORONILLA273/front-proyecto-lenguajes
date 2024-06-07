@@ -12,7 +12,7 @@
         :headers="headers"
         :items="maestros"
         elevation="0"
-        style="width: 75% !important;"
+        style="width: 100% !important;"
         hide-default-header
         hide-default-footer
         item-value="id"
