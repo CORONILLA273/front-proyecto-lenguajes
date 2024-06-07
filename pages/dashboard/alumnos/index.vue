@@ -175,7 +175,7 @@
           <v-col cols="6">
             <v-btn block color="green" @click="borrar">
               <span style="color: white; text-transform: none;">
-                Add Another Otro
+                Add Another
               </span>
             </v-btn>
           </v-col>
