@@ -1,77 +1,102 @@
 <template>
   <v-row>
+    <v-col cols="12">
+      <v-btn block color="blue" @click="showNuevo = true">
+        <span style="color: white; text-transform: none;">
+          Add Students
+        </span>
+      </v-btn>
+    </v-col>
     <v-col cols="8">
-      <v-row>
-        <v-btn block color="blue" @click="showNuevo = true">
-          <span style="color: white; text-transform: none;">
-            Add Students
-          </span>
-        </v-btn>
-      </v-row>
-      <v-row class="mt-3">
-        <v-data-table
-          :headers="headers"
-          :items="estudiantes"
-          elevation="0"
-          style="width: 100% !important;"
-          hide-default-header
-          hide-default-footer
-          item-value="id"
-          class="custom-table"
-          disable-pagination
-          :items-per-page="-1"
-        >
-          <template #item="{ item, index }">
-            <tr
-              :class="{'row-hover': hoveredRow === index, 'row-selected': selectedRow === item.id}"
-              @mouseover="hoveredRow = index"
-              @mouseleave="hoveredRow = null"
-              @click="selectRow(item)"
-            >
-              <td class="custom-cell">
-                <div class="custom-cell-content">
-                  <img :src="getAvatarUrl(item.id)" alt="avatar" class="avatar">
-                  <span>{{ item.nameStu }}</span>
-                </div>
-              </td>
-              <td class="custom-cell">
-                {{ item.id }}
-              </td>
-              <td class="custom-cell">
-                {{ item.emailStu }}
-              </td>
-              <td class="custom-cell">
-                {{ item.classStu }}
-              </td>
-              <td class="custom-cell">
-                {{ item.genderStu }}
-              </td>
-            </tr>
-          </template>
-          <template #header="{ props }">
-            <tr class="custom-header">
-              <th v-for="header in props.headers" :key="header.text" class="custom-header-cell">
-                {{ header.text }}
-              </th>
-            </tr>
-          </template>
-        </v-data-table>
-      </v-row>
+      <v-data-table
+        :headers="headers"
+        :items="estudiantes"
+        elevation="0"
+        style="width: 100% !important;"
+        hide-default-header
+        hide-default-footer
+        item-value="id"
+        class="custom-table"
+        disable-pagination
+        :items-per-page="-1"
+      >
+        <template #item="{ item, index }">
+          <tr
+            :class="{'row-hover': hoveredRow === index, 'row-selected': selectedRow === item.id}"
+            @mouseover="hoveredRow = index"
+            @mouseleave="hoveredRow = null"
+            @click="selectRow(item)"
+          >
+            <td class="custom-cell">
+              <div class="custom-cell-content">
+                <img :src="getAvatarUrl(item.id)" alt="avatar" class="avatar">
+                <span>{{ item.nameStu }}</span>
+              </div>
+            </td>
+            <td class="custom-cell">
+              {{ item.id }}
+            </td>
+            <td class="custom-cell">
+              {{ item.emailStu }}
+            </td>
+            <td class="custom-cell">
+              {{ item.classStu }}
+            </td>
+            <td class="custom-cell">
+              {{ item.genderStu }}
+            </td>
+          </tr>
+        </template>
+        <template #header="{ props }">
+          <tr class="custom-header">
+            <th v-for="header in props.headers" :key="header.text" class="custom-header-cell">
+              {{ header.text }}
+            </th>
+          </tr>
+        </template>
+      </v-data-table>
     </v-col>
     <v-col cols="4">
-      <v-card v-if="selectedStudent" class="mx-auto" max-width="400">
+      <v-card v-if="selectedStudent" class="mx-auto" max-width="313" flat>
         <v-card-title class="text-center">
-          <div class="text-center" style="width: 95%; font-size: 16px; color: #424242;">
+          <div class="text-center" style="width: 95%; font-size: 16px; color: #424242; font-weight: 500;">
             {{ selectedStudent.id }}
           </div>
         </v-card-title>
         <v-card-text class="text-center">
           <div style="text-align: center;">
-            <img :src="getAvatarUrl(selectedStudent.id)" alt="avatar" class="avatar" style="width: 180px; height: 180px;">
-            <div style="font-weight: bold; font-size: 16px; color:#1A1A1A">
+            <img :src="getAvatarUrl(selectedStudent.id)" alt="avatar" class="avatar" style="width: 180px; height: 180px; font-size: 16px;">
+            <div style="font-weight: 700; font-size: 16px; color:#1A1A1A; padding-top: 15px; padding-bottom: 6px;">
               {{ selectedStudent.nameStu }}
             </div>
             <div>{{ selectedStudent.classStu }}</div>
+            <div class="icons" style="padding-top: 14px; padding-bottom: 30px;">
+              <img :src="teacherIcon" alt="Teacher" class="icon">
+              <img :src="callCallingIcon" alt="Call Calling" class="icon">
+              <img :src="smsIcon" alt="SMS" class="icon">
+            </div>
+            <div class="about-section" style="color: black; font-size: 12px; padding-bottom: 100px;">
+              About
+            </div>
+            <div class="info-section">
+              <div class="info-item">
+                <div class="info-label">
+                  Age
+                </div>
+                <div style="font-size: 14px; font-weight: 500;">
+                  {{ selectedStudent.ageStu }}
+                </div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">
+                  Gender
+                </div>
+                <div>{{ selectedStudent.genderStu }}</div>
+              </div>
+            </div>
+            <div class="about-section" style="color: black; font-size: 12px;">
+              People from the same class
+            </div>
           </div>
         </v-card-text>
       </v-card>
@@ -161,6 +186,10 @@
 </template>
 
 <script>
+import callCallingIcon from '../../../assets/svg/call-calling.png'
+import smsIcon from '../../../assets/svg/sms.png'
+import teacherIcon from '../../../assets/svg/teacher.png'
+
 export default {
   data () {
     return {
@@ -210,6 +239,11 @@ export default {
       hoveredRow: null,
       selectedRow: null,
       selectedStudent: null, // Estudiante seleccionado
+
+      // Íconos
+      callCallingIcon,
+      smsIcon,
+      teacherIcon,
 
       passwordValidation: [
         v => (v && v.length > 8) || 'Password must have be more than 8 chars'
@@ -307,6 +341,7 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@400;700&display=swap');
 
 .custom-table {
+  font-weight: 500;
   padding: 16px;
   font-family: 'Kumbh Sans', sans-serif;
   color: #4F4F4F;
@@ -317,7 +352,7 @@ export default {
 }
 
 .custom-header-cell {
-  font-weight: bold;
+  font-weight: 700;
   padding: 16px;
   text-align: left;
   font-size: 14px; /* Ajusta el tamaño de la letra aquí */
@@ -363,5 +398,38 @@ export default {
   color: #4F4F4F;
   height: 55px; /* Aumentar la altura de cada fila */
   line-height: 55px; /* Ajustar la altura de línea para centrar el contenido verticalmente */
+}
+
+.icons {
+  margin-top: 16px;
+}
+
+.icon {
+  width: 44px;
+  height: 44px;
+  margin: 0 8px;
+  padding: 10px;
+}
+
+.about-section {
+  font-weight: bold;
+  font-size: 16px;
+  text-align: left;
+  margin: 16px 0;
+}
+.info-section {
+  display: flex;
+  justify-content: space-between;
+  margin: 16px 0;
+  text-align: left;
+}
+.info-item {
+  width: 50%;
+}
+.info-label {
+  font-weight: 600;
+  font-size: 12px;
+  padding-bottom: 3px;
+  color: #1A1A1A;
 }
 </style>
