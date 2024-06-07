@@ -1,20 +1,59 @@
 <template>
-  <v-col cols="12">
-    <v-row>
-      <v-btn block color="blue" @click="showNuevo = true">
+  <div>
+    <v-toolbar flat>
+      <v-btn text color="blue" style="margin-right: 10px;">
+        <span style="color: blue; text-transform: none;">
+          Export CSV
+        </span>
+      </v-btn>
+      <v-btn color="blue" @click="showNuevo = true">
         <span style="color: white; text-transform: none;">
           Add Students
         </span>
       </v-btn>
-    </v-row>
-    <v-row class="mt-3">
-      <v-data-table
-        :headers="headers"
-        :items="estudiantes"
-        elevation="0"
-        style="width: 100% !important;"
-      />
-    </v-row>
+      <v-spacer />
+      <v-icon left>
+        mdi-bell
+      </v-icon>
+      <v-btn text color="blue" style="text-align: right; margin-right: 50px;">
+        <span style="color: black; text-transform: none;">
+          Log out
+        </span>
+      </v-btn>
+    </v-toolbar>
+
+    <v-container>
+      <v-row class="mt-3">
+        <v-col cols="1">
+          <v-select
+            v-model="filter"
+            :items="filterOptions"
+            label="Filter"
+            outlined
+            dense
+          />
+        </v-col>
+        <v-col cols="6">
+          <v-text-field
+            v-model="search"
+            prepend-inner-icon="mdi-magnify"
+            label="Search for a student by name or email"
+            outlined
+            hide-details
+          />
+        </v-col>
+      </v-row>
+      <v-row class="mt-3">
+        <v-col cols="12">
+          <v-data-table
+            :headers="headers"
+            :items="filteredStudents"
+            elevation="0"
+            style="width: 100% !important;"
+          />
+        </v-col>
+      </v-row>
+    </v-container>
     <v-dialog v-model="showNuevo" max-width="1100" persistent @click:outside="closeDialog">
       <v-card
         style="overflow: hidden; width: 100%; height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 50px;"
@@ -128,7 +167,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-col>
+  </div>
 </template>
 
 <script>
@@ -136,42 +175,17 @@ export default {
   data () {
     return {
       headers: [
-        {
-          text: 'Name', // Esto es para el texto del encabezado
-          align: 'left', // Esto es para alinearlo
-          sortable: true, // esto es ordenar descedente y ascedente
-          value: 'nameStu' // Esto es para el nombred el elemento que viene en la base de datos.
-        },
-        {
-          text: 'Student ID', // Esto es para el texto del encabezado
-          align: 'left', // Esto es para alinearlo
-          sortable: true, // esto es ordenar descedente y ascedente
-          value: 'id' // Esto es para el nombred el elemento que viene en la base de datos.
-        },
-        {
-          text: 'Email Address', // Esto es para el texto del encabezado
-          align: 'left', // Esto es para alinearlo
-          sortable: true, // esto es ordenar descedente y ascedente
-          value: 'emailStu' // Esto es para el nombred el elemento que viene en la base de datos.
-        },
-        {
-          text: 'Class', // Esto es para el texto del encabezado
-          align: 'left', // Esto es para alinearlo
-          sortable: true, // esto es ordenar descedente y ascedente
-          value: 'classStu' // Esto es para el nombred el elemento que viene en la base de datos.
-        },
-        {
-          text: 'Gender', // Esto es para el texto del encabezado
-          align: 'left', // Esto es para alinearlo
-          sortable: true, // esto es ordenar descedente y ascedente
-          value: 'genderStu' // Esto es para el nombred el elemento que viene en la base de datos.
-        }
+        { text: 'Name', align: 'left', sortable: true, value: 'nameStu' },
+        { text: 'Student ID', align: 'left', sortable: true, value: 'id' },
+        { text: 'Email Address', align: 'left', sortable: true, value: 'emailStu' },
+        { text: 'Class', align: 'left', sortable: true, value: 'classStu' },
+        { text: 'Gender', align: 'left', sortable: true, value: 'genderStu' }
       ],
       token: null,
       estudiantes: [],
       showNuevo: false,
       validForm: false,
-      // Space
+      search: '',
       studentName: null,
       schoolEmailStu: null,
       phoneNumberStu: null,
@@ -179,13 +193,23 @@ export default {
       classNameStu: null,
       genderNameStu: null,
       ageNumStu: null,
-
       passwordValidation: [
-        v => (v && v.length > 8) || 'Password must have be more than 8 chars'
+        v => (v && v.length > 8) || 'Password must be more than 8 characters'
       ],
       emailValidation: [
         v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
       ]
+    }
+  },
+  computed: {
+    filteredStudents () {
+      return this.estudiantes.filter((student) => {
+        const searchTerm = this.search.toLowerCase()
+        return (
+          student.nameStu.toLowerCase().includes(searchTerm) ||
+          student.emailStu.toLowerCase().includes(searchTerm)
+        )
+      })
     }
   },
   mounted () {
