@@ -8,6 +8,14 @@
       </v-btn>
     </v-row>
     <v-row class="mt-3">
+      <v-text-field
+        v-model="searchTeacher"
+        placeholder="Enter teacher name"
+        class="mt-3"
+        @input="searchTeacherByName"
+      />
+    </v-row>
+    <v-row v-if="!selectedTeacher" class="mt-3">
       <v-data-table
         :headers="headers"
         :items="maestros"
@@ -55,6 +63,37 @@
           </tr>
         </template>
       </v-data-table>
+    </v-row>
+    <v-row v-if="selectedTeacher" class="mt-3 teacher-details">
+      <v-col cols="6" class="text-center">
+        <img :src="getAvatarUrl(selectedTeacher.id)" alt="avatar" class="avatar-large">
+        <div class="teacher-name">{{ selectedTeacher.nameTea }}</div>
+        <div class="teacher-class">{{ selectedTeacher.classTea }}</div>
+        <div class="icons" style="padding-top: 14px; padding-bottom: 30px;">
+          <img :src="teacherIcon" alt="Teacher" class="icon">
+          <img :src="callCallingIcon" alt="Call Calling" class="icon">
+          <img :src="smsIcon" alt="SMS" class="icon">
+        </div>
+      </v-col>
+      <v-col cols="6">
+        <div class="about-section">
+          <h3>About</h3>
+          <p>{{ selectedTeacher.aboutTea }}</p>
+        </div>
+        <div class="info-section">
+          <div class="info-item">
+            <div class="info-label">Age</div>
+            <div>{{ selectedTeacher.ageTea }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Gender</div>
+            <div>{{ selectedTeacher.genderTea }}</div>
+          </div>
+        </div>
+        <div class="about-section" style="color: black; font-size: 12px;">
+          People from the same class
+        </div>
+      </v-col>
     </v-row>
     <v-dialog v-model="showNuevo" width="400" persistent>
       <v-card-title>Add Teachers</v-card-title>
@@ -154,41 +193,40 @@ export default {
     return {
       headers: [
         {
-          text: 'Name', // Esto es para el texto del encabezado
-          align: 'left', // Esto es para alinearlo
-          sortable: true, // esto es ordenar descedente y ascedente
-          value: 'nameTea' // Esto es para el nombred el elemento que viene en la base de datos.
+          text: 'Name',
+          align: 'left',
+          sortable: true,
+          value: 'nameTea'
         },
         {
-          text: 'Subject', // Esto es para el texto del encabezado
-          align: 'left', // Esto es para alinearlo
-          sortable: true, // esto es ordenar descedente y ascedente
-          value: 'subjectTea' // Esto es para el nombred el elemento que viene en la base de datos.
+          text: 'Subject',
+          align: 'left',
+          sortable: true,
+          value: 'subjectTea'
         },
         {
-          text: 'Class', // Esto es para el texto del encabezado
-          align: 'left', // Esto es para alinearlo
-          sortable: true, // esto es ordenar descedente y ascedente
-          value: 'classTea' // Esto es para el nombred el elemento que viene en la base de datos.
+          text: 'Class',
+          align: 'left',
+          sortable: true,
+          value: 'classTea'
         },
         {
-          text: 'Email Address', // Esto es para el texto del encabezado
-          align: 'left', // Esto es para alinearlo
-          sortable: true, // esto es ordenar descedente y ascedente
-          value: 'emailTea' // Esto es para el nombred el elemento que viene en la base de datos.
+          text: 'Email Address',
+          align: 'left',
+          sortable: true,
+          value: 'emailTea'
         },
         {
-          text: 'Gender', // Esto es para el texto del encabezado
-          align: 'left', // Esto es para alinearlo
-          sortable: true, // esto es ordenar descedente y ascedente
-          value: 'genderTea' // Esto es para el nombred el elemento que viene en la base de datos.
+          text: 'Gender',
+          align: 'left',
+          sortable: true,
+          value: 'genderTea'
         }
       ],
       token: null,
       maestros: [],
       showNuevo: false,
       validForm: false,
-      // Space
       teacherName: null,
       emailTeacher: null,
       phoneNumberTeacher: null,
@@ -199,7 +237,8 @@ export default {
       designationTeacher: null,
       hoveredRow: null,
       selectedRow: null,
-      selectedStudent: null,
+      selectedTeacher: null,
+      searchTeacher: '',
 
       passwordValidation: [
         v => (v && v.length > 8) || 'Password must have be more than 8 chars'
@@ -211,7 +250,6 @@ export default {
   },
   mounted () {
     this.token = localStorage.getItem('token')
-    console.log(this.token)
     if (!this.token) {
       this.$router.push('/')
     }
@@ -225,10 +263,8 @@ export default {
           Authorization: `Bearer ${this.token}`
         }
       }
-      console.log(config)
       this.$axios.get(url, config)
         .then((res) => {
-          console.log('@@ res => ', res)
           if (res.data.message === 'Success') {
             this.maestros = res.data.teachers
           } else if (res.data.message === 'Invalid Token') {
@@ -236,8 +272,8 @@ export default {
           }
         })
         .catch((err) => {
+          console.log(err)
           this.$router.push('/')
-          console.log('@@@ err => ', err)
         })
     },
     getAvatarUrl (id) {
@@ -256,7 +292,7 @@ export default {
     },
     selectRow (teacher) {
       this.selectedRow = teacher.id
-      this.selectedStudent = teacher
+      this.selectedTeacher = teacher
       this.hoveredRow = null
     },
     agregar () {
@@ -273,7 +309,6 @@ export default {
           genderTea: this.genderNameTeacher,
           designationTea: this.designationTeacher
         }
-        console.log('@@@ data => ', sendData)
         const config = {
           headers: {
             Authorization: `Bearer ${this.token}`
@@ -282,18 +317,29 @@ export default {
         const url = '/api/auth/registrar-profesor'
         this.$axios.post(url, sendData, config)
           .then((res) => {
-            console.log('@@@ res => ', res)
             if (res.data.message === 'Profesor Registrado Satisfactoriamente') {
               this.getAllTeachers()
               this.showNuevo = false
             }
           })
           .catch((err) => {
-            console.log('@@@ err => ', err)
+            console.log(err)
           })
       } else {
         alert('Faltan Datos')
       }
+    },
+    searchTeacherByName () {
+      const teacher = this.maestros.find(m => m.nameTea.toLowerCase() === this.searchTeacher.toLowerCase())
+      if (teacher) {
+        this.selectedTeacher = teacher
+      } else {
+        this.selectedTeacher = null
+      }
+    },
+    clearSearch () {
+      this.searchTeacher = ''
+      this.selectedTeacher = null
     }
   }
 }
@@ -309,14 +355,14 @@ export default {
 }
 
 .custom-header {
-  background-color: #f5f5f5; /* Puedes ajustar el color de fondo si lo deseas */
+  background-color: #f5f5f5;
 }
 
 .custom-header-cell {
   font-weight: bold;
   padding: 16px;
   text-align: left;
-  font-size: 14px; /* Ajusta el tamaño de la letra aquí */
+  font-size: 14px;
   color: #4F4F4F;
 }
 
@@ -337,27 +383,91 @@ export default {
 }
 
 .cell-text {
-  color: inherit; /* Inherit color from parent */
+  color: inherit;
 }
 
 .row-hover {
-  background-color: #D5E7F6 !important; /* Azul claro para el hover */
+  background-color: #D5E7F6 !important;
 }
 
 .row-selected {
-  background-color: #509CDB !important; /* Azul claro para la selección */
-  color: white !important; /* Color del texto blanco */
+  background-color: #509CDB !important;
+  color: white !important;
 }
 
 .row-selected .custom-cell,
 .row-selected .custom-cell .cell-text {
-  color: white !important; /* Asegura que el texto de las celdas sea blanco */
+  color: white !important;
 }
 
 .v-data-table tbody tr {
   cursor: pointer;
   color: #4F4F4F;
-  height: 55px; /* Aumentar la altura de cada fila */
-  line-height: 55px; /* Ajustar la altura de línea para centrar el contenido verticalmente */
+  height: 55px;
+  line-height: 55px;
+}
+
+.fixed-width {
+  width: 100%;
+}
+
+.mt-3 {
+  margin-top: 16px;
+}
+
+.teacher-details {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.avatar-large {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+}
+
+.teacher-name {
+  font-weight: 700;
+  font-size: 16px;
+  color: #1A1A1A;
+  padding-top: 15px;
+  padding-bottom: 6px;
+}
+
+.teacher-class {
+  font-size: 14px;
+  color: #4F4F4F;
+}
+
+.icons {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.icon {
+  margin: 0 10px;
+  width: 30px;
+  height: 30px;
+}
+
+.about-section {
+  margin-top: 20px;
+}
+
+.info-section {
+  margin-top: 20px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.info-label {
+  font-weight: bold;
+  color: #4F4F4F;
 }
 </style>
