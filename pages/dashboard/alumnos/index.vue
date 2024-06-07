@@ -7,7 +7,7 @@
         </span>
       </v-btn>
     </v-col>
-    <v-col cols="8">
+    <v-col cols="9" class="table-container">
       <v-data-table
         :headers="headers"
         :items="estudiantes"
@@ -56,7 +56,7 @@
         </template>
       </v-data-table>
     </v-col>
-    <v-col cols="4">
+    <v-col cols="3" class="card-container">
       <v-card v-if="selectedStudent" class="mx-auto" max-width="313" flat>
         <v-card-title class="text-center">
           <div class="text-center" style="width: 95%; font-size: 16px; color: #424242; font-weight: 500;">
@@ -96,6 +96,21 @@
             </div>
             <div class="about-section" style="color: black; font-size: 12px;">
               People from the same class
+            </div>
+            <div class="same-class">
+              <div class="avatars">
+                <img
+                  v-for="(student, index) in firstFiveClassmates"
+                  :key="student.id"
+                  :src="getAvatarUrl(student.id)"
+                  alt="avatar"
+                  class="avatar-small"
+                  :style="{ zIndex: index }"
+                >
+              </div>
+              <div v-if="remainingClassmatesCount > 0" class="extra-count">
+                +{{ remainingClassmatesCount }} more
+              </div>
             </div>
           </div>
         </v-card-text>
@@ -238,7 +253,7 @@ export default {
       ageNumStu: null,
       hoveredRow: null,
       selectedRow: null,
-      selectedStudent: null, // Estudiante seleccionado
+      selectedStudent: null,
 
       // Íconos
       callCallingIcon,
@@ -251,6 +266,18 @@ export default {
       emailValidation: [
         v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
       ]
+    }
+  },
+  computed: {
+    filteredClassmates () {
+      if (!this.selectedStudent) { return [] }
+      return this.estudiantes.filter(student => student.classStu === this.selectedStudent.classStu && student.id !== this.selectedStudent.id)
+    },
+    firstFiveClassmates () {
+      return this.filteredClassmates.slice(0, 5)
+    },
+    remainingClassmatesCount () {
+      return this.filteredClassmates.length - 5
     }
   },
   mounted () {
@@ -348,14 +375,14 @@ export default {
 }
 
 .custom-header {
-  background-color: #f5f5f5; /* Puedes ajustar el color de fondo si lo deseas */
+  background-color: #f5f5f5;
 }
 
 .custom-header-cell {
   font-weight: 700;
   padding: 16px;
   text-align: left;
-  font-size: 14px; /* Ajusta el tamaño de la letra aquí */
+  font-size: 14px;
   color: #4F4F4F;
 }
 
@@ -375,29 +402,37 @@ export default {
   margin-right: 8px;
 }
 
+.avatar-small {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  margin-right: -8px;
+  position: relative;
+}
+
 .cell-text {
-  color: inherit; /* Inherit color from parent */
+  color: inherit;
 }
 
 .row-hover {
-  background-color: #D5E7F6 !important; /* Azul claro para el hover */
+  background-color: #D5E7F6 !important;
 }
 
 .row-selected {
-  background-color: #509CDB !important; /* Azul claro para la selección */
-  color: white !important; /* Color del texto blanco */
+  background-color: #509CDB !important;
+  color: white !important;
 }
 
 .row-selected .custom-cell,
 .row-selected .custom-cell .cell-text {
-  color: white !important; /* Asegura que el texto de las celdas sea blanco */
+  color: white !important;
 }
 
 .v-data-table tbody tr {
   cursor: pointer;
   color: #4F4F4F;
-  height: 55px; /* Aumentar la altura de cada fila */
-  line-height: 55px; /* Ajustar la altura de línea para centrar el contenido verticalmente */
+  height: 55px;
+  line-height: 55px;
 }
 
 .icons {
@@ -417,19 +452,46 @@ export default {
   text-align: left;
   margin: 16px 0;
 }
+
 .info-section {
   display: flex;
   justify-content: space-between;
   margin: 16px 0;
   text-align: left;
 }
+
 .info-item {
   width: 50%;
 }
+
 .info-label {
   font-weight: 600;
   font-size: 12px;
   padding-bottom: 3px;
   color: #1A1A1A;
+}
+
+.same-class {
+  display: flex;
+  align-items: center;
+}
+
+.avatars {
+  display: flex;
+  position: relative;
+}
+
+.extra-count {
+  margin-left: 20px;
+  font-size: 10px;
+  color: #73B0E2;
+}
+
+.table-container {
+  margin-right: 0px;
+}
+
+.card-container {
+  margin-left: 0px;
 }
 </style>
