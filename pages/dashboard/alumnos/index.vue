@@ -239,7 +239,7 @@
                 <v-col cols="2">
                   <v-btn flat block color="#d3d3d3" style="border: none; display: flex; align-items: center; justify-content: center;" @click="agregar">
                     <span style="color: black; text-transform: none;">
-                      Add student
+                      Add Student
                     </span>
                   </v-btn>
                 </v-col>
