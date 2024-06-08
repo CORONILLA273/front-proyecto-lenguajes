@@ -12,7 +12,7 @@
             <v-icon style="margin-right: 50px">
               mdi-bell
             </v-icon>
-            <v-btn color="blue" style="text-align: right; margin-right: 100px; width: 130px; height: 50px; border-radius: 10px;">
+            <v-btn color="blue" style="text-align: right; margin-right: 100px; width: 130px; height: 50px; border-radius: 10px;" @click="logOut()">
               <span style="color: white; text-transform: none; font-size: 15px;">
                 Log out
               </span>
@@ -95,6 +95,12 @@ export default {
   mounted () {
     const token = localStorage.getItem('token')
     if (!token) {
+      this.$router.push('/')
+    }
+  },
+  methods: {
+    logOut () {
+      this.token = localStorage.removeItem('token')
       this.$router.push('/')
     }
   }

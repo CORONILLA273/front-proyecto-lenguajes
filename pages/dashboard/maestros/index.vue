@@ -17,7 +17,7 @@
           <v-icon left>
             mdi-bell
           </v-icon>
-          <v-btn text color="blue" style="text-align: right; margin-right: 50px;">
+          <v-btn text color="blue" style="text-align: right; margin-right: 50px;" @click="logOut()">
             <span style="color: black; text-transform: none;">
               Log out
             </span>
@@ -364,6 +364,10 @@ export default {
     this.getAllTeachers()
   },
   methods: {
+    logOut () {
+      this.token = localStorage.removeItem('token')
+      this.$router.push('/')
+    },
     getAllTeachers () {
       const url = '/api/auth/get-all-teachers'
       const config = {
