@@ -160,7 +160,7 @@
                         Age
                       </div>
                       <div style="font-size: 14px; font-weight: 500;">
-                        {{ selectedStudent.ageStu }}
+                        21
                       </div>
                     </div>
                     <div class="info-item">
