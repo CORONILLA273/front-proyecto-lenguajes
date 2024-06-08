@@ -7,131 +7,148 @@
         </span>
       </v-btn>
     </v-col>
-    <v-col cols="9" class="table-container">
-      <v-data-table
-        :headers="headers"
-        :items="estudiantes"
-        elevation="0"
-        style="width: 100% !important;"
-        hide-default-header
-        hide-default-footer
-        item-value="id"
-        class="custom-table"
-        disable-pagination
-        :items-per-page="-1"
-      >
-        <template #item="{ item, index }">
-          <tr
-            :class="{'row-hover': hoveredRow === index, 'row-selected': selectedRow === item.id}"
-            @mouseover="hoveredRow = index"
-            @mouseleave="hoveredRow = null"
-            @click="selectRow(item)"
-          >
-            <td class="custom-cell">
-              <div class="custom-cell-content">
-                <img :src="getAvatarUrl(item.id)" alt="avatar" class="avatar">
-                <span>{{ item.nameStu }}</span>
-              </div>
-            </td>
-            <td class="custom-cell">
-              {{ item.id }}
-            </td>
-            <td class="custom-cell">
-              {{ item.emailStu }}
-            </td>
-            <td class="custom-cell">
-              {{ item.classStu }}
-            </td>
-            <td class="custom-cell">
-              {{ item.genderStu }}
-            </td>
-          </tr>
-        </template>
-        <template #header="{ props }">
-          <tr class="custom-header">
-            <th v-for="header in props.headers" :key="header.text" class="custom-header-cell">
-              {{ header.text }}
-            </th>
-          </tr>
-        </template>
-      </v-data-table>
-    </v-col>
-    <v-col cols="3" class="card-container">
-      <v-card v-if="selectedStudent" class="mx-auto" max-width="313" flat>
-        <v-card-title class="text-center">
-          <div class="text-center" style="width: 95%; font-size: 16px; color: #424242; font-weight: 500; font-family: 'Kumbh Sans', sans-serif;">
-            {{ selectedStudent.id }}
+    <template v-if="estudiantes.length === 0">
+      <v-col cols="12" class="no-students-container">
+        <div class="no-students-content">
+          <img :src="noStudents" alt="No Students" class="no-students-image">
+          <div class="no-students-text">
+            No students at this time
           </div>
-        </v-card-title>
-        <v-card-text class="text-center">
-          <div style="text-align: center;">
-            <img :src="getAvatarUrl(selectedStudent.id)" alt="avatar" class="avatar" style="width: 180px; height: 180px; font-size: 16px;">
-            <div style="font-family: 'Kumbh Sans', sans-serif; font-weight: 700; font-size: 18px; color:#1A1A1A; padding-top: 15px; padding-bottom: 6px;">
-              {{ selectedStudent.nameStu }}
-            </div>
-            <div>{{ getTypeStudent(selectedStudent.classStu) }}</div>
-            <div class="icons" style="padding-top: 14px; padding-bottom: 30px; display: flex; justify-content: center;">
-              <div class="icon-container" @mouseenter="showTooltip('classStu')" @mouseleave="hideTooltip">
-                <img :src="teacherIcon" alt="Teacher" class="icon">
-                <div v-if="tooltipVisible && tooltipType === 'classStu'" class="tooltip">
-                  {{ selectedStudent.classStu }}
-                </div>
-              </div>
-              <div class="icon-container" @mouseenter="showTooltip('phoneStu')" @mouseleave="hideTooltip">
-                <img :src="callCallingIcon" alt="Call Calling" class="icon">
-                <div v-if="tooltipVisible && tooltipType === 'phoneStu'" class="tooltip">
-                  {{ selectedStudent.phoneStu }}
-                </div>
-              </div>
-              <div class="icon-container" @mouseenter="showTooltip('emailStu')" @mouseleave="hideTooltip">
-                <img :src="smsIcon" alt="SMS" class="icon">
-                <div v-if="tooltipVisible && tooltipType === 'emailStu'" class="tooltip">
-                  {{ selectedStudent.emailStu }}
-                </div>
-              </div>
-            </div>
-            <div class="about-section">
-              About
-            </div>
-            <div style="text-align: justify;">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Repellendus officiis obcaecati fugiat dolorem dicta adipisci natus dignissimos officia unde sequi reprehenderit ipsum expedita omnis, nihil vitae architecto nulla cum eaque?</div>
-            <div class="info-section">
-              <div class="info-item">
-                <div class="info-label" style="font-weight: 600;">
-                  Age
-                </div>
-                <div style="font-size: 14px; font-weight: 500;">
-                  {{ selectedStudent.ageStu }}
-                </div>
-              </div>
-              <div class="info-item">
-                <div class="info-label" style="font-weight: 600;">
-                  Gender
-                </div>
-                <div>{{ selectedStudent.genderStu }}</div>
-              </div>
-            </div>
-            <div class="about-section">
-              People from the same class
-            </div>
-            <div class="same-class">
-              <div class="avatars">
-                <img
-                  v-for="(student, index) in firstFiveClassmates"
-                  :key="student.id"
-                  :src="getAvatarUrl(student.id)"
-                  alt="avatar"
-                  class="avatar-small"
-                  :style="{ zIndex: index }"
-                >
-              </div>
-              <div v-if="remainingClassmatesCount > 0" class="extra-count">
-                +{{ remainingClassmatesCount }} more
-              </div>
-            </div>
+          <div class="no-students-subtext">
+            Students will appear here after they enroll in your school.
           </div>
-        </v-card-text>
-      </v-card>
-    </v-col>
+        </div>
+      </v-col>
+    </template>
+    <template v-else>
+      <v-col cols="9" class="table-container">
+        <v-data-table
+          :headers="headers"
+          :items="estudiantes"
+          elevation="0"
+          style="width: 100% !important;"
+          hide-default-header
+          hide-default-footer
+          item-value="id"
+          class="student-table"
+          disable-pagination
+          :items-per-page="-1"
+        >
+          <template #item="{ item, index }">
+            <tr
+              :class="{'row-hover': hoveredRow === index, 'row-selected': selectedRow === item.id}"
+              @mouseover="hoveredRow = index"
+              @mouseleave="hoveredRow = null"
+              @click="selectRow(item)"
+            >
+              <td class="student-cell">
+                <div class="student-cell-content">
+                  <img :src="getAvatarUrl(item.id)" alt="avatar" class="avatar">
+                  <span>{{ item.nameStu }}</span>
+                </div>
+              </td>
+              <td class="student-cell">
+                {{ item.id }}
+              </td>
+              <td class="student-cell">
+                {{ item.emailStu }}
+              </td>
+              <td class="student-cell">
+                {{ item.classStu }}
+              </td>
+              <td class="student-cell">
+                {{ item.genderStu }}
+              </td>
+            </tr>
+          </template>
+          <template #header="{ props }">
+            <tr class="student-header">
+              <th v-for="header in props.headers" :key="header.text" class="student-header-cell">
+                {{ header.text }}
+              </th>
+            </tr>
+          </template>
+        </v-data-table>
+      </v-col>
+      <v-col cols="3" class="card-container">
+        <v-card v-if="selectedStudent" class="mx-auto" max-width="313" flat>
+          <v-card-title class="text-center">
+            <div class="text-center" style="width: 95%; font-size: 16px; color: #424242; font-weight: 500; font-family: 'Kumbh Sans', sans-serif;">
+              {{ selectedStudent.id }}
+            </div>
+          </v-card-title>
+          <v-card-text class="text-center">
+            <div style="text-align: center;">
+              <img :src="getAvatarUrl(selectedStudent.id)" alt="avatar" class="avatar" style="width: 180px; height: 180px; font-size: 16px;">
+              <div style="font-family: 'Kumbh Sans', sans-serif; font-weight: 700; font-size: 18px; color:#1A1A1A; padding-top: 15px; padding-bottom: 6px;">
+                {{ selectedStudent.nameStu }}
+              </div>
+              <div>{{ getTypeStudent(selectedStudent.classStu) }}</div>
+              <div class="icons" style="padding-top: 14px; padding-bottom: 30px; display: flex; justify-content: center;">
+                <div class="icon-container" @mouseenter="showTooltip('classStu')" @mouseleave="hideTooltip">
+                  <img :src="teacherIcon" alt="Teacher" class="icon">
+                  <div v-if="tooltipVisible && tooltipType === 'classStu'" class="tooltip">
+                    {{ selectedStudent.classStu }}
+                  </div>
+                </div>
+                <div class="icon-container" @mouseenter="showTooltip('phoneStu')" @mouseleave="hideTooltip">
+                  <img :src="callCallingIcon" alt="Call Calling" class="icon">
+                  <div v-if="tooltipVisible && tooltipType === 'phoneStu'" class="tooltip">
+                    {{ selectedStudent.phoneStu }}
+                  </div>
+                </div>
+                <div class="icon-container" @mouseenter="showTooltip('emailStu')" @mouseleave="hideTooltip">
+                  <img :src="smsIcon" alt="SMS" class="icon">
+                  <div v-if="tooltipVisible && tooltipType === 'emailStu'" class="tooltip">
+                    {{ selectedStudent.emailStu }}
+                  </div>
+                </div>
+              </div>
+              <div class="about-section">
+                About
+              </div>
+              <div style="text-align: justify;">
+                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Repellendus officiis obcaecati fugiat dolorem dicta adipisci natus dignissimos officia unde sequi reprehenderit ipsum expedita omnis, nihil vitae architecto nulla cum eaque?
+              </div>
+              <div class="info-section">
+                <div class="info-item">
+                  <div class="info-label" style="font-weight: 600;">
+                    Age
+                  </div>
+                  <div style="font-size: 14px; font-weight: 500;">
+                    {{ selectedStudent.ageStu }}
+                  </div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label" style="font-weight: 600;">
+                    Gender
+                  </div>
+                  <div>{{ selectedStudent.genderStu }}</div>
+                </div>
+              </div>
+              <div class="about-section">
+                People from the same class
+              </div>
+              <div class="same-class">
+                <div class="avatars">
+                  <img
+                    v-for="(student, index) in firstFiveClassmates"
+                    :key="student.id"
+                    :src="getAvatarUrl(student.id)"
+                    alt="avatar"
+                    class="avatar-small"
+                    :style="{ zIndex: index }"
+                  >
+                </div>
+                <div v-if="remainingClassmatesCount > 0" class="extra-count">
+                  +{{ remainingClassmatesCount }} more
+                </div>
+              </div>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </template>
     <v-dialog v-model="showNuevo" width="400" persistent>
       <v-card-title>Add Students</v-card-title>
       <v-card-text>
@@ -217,6 +234,7 @@
 </template>
 
 <script>
+import noStudents from '../../../assets/estudiantes/no-notification.png'
 import callCallingIcon from '../../../assets/svg/call-calling.png'
 import smsIcon from '../../../assets/svg/sms.png'
 import teacherIcon from '../../../assets/svg/teacher.png'
@@ -270,15 +288,15 @@ export default {
       hoveredRow: null,
       selectedRow: null,
       selectedStudent: null,
+      juan: [],
 
-      // Tooltip data
       tooltipVisible: false,
       tooltipType: null,
 
-      // Íconos
       callCallingIcon,
       smsIcon,
       teacherIcon,
+      noStudents,
 
       passwordValidation: [
         v => (v && v.length > 8) || 'Password must have be more than 8 chars'
@@ -406,18 +424,18 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap');
 
-.custom-table {
+.student-table {
   font-weight: 500;
   padding: 16px;
   font-family: 'Kumbh Sans', sans-serif;
   color: #4F4F4F;
 }
 
-.custom-header {
+.student-header {
   background-color: #f5f5f5;
 }
 
-.custom-header-cell {
+.student-header-cell {
   font-weight: 700;
   padding: 16px;
   text-align: left;
@@ -425,11 +443,11 @@ export default {
   color: #4F4F4F;
 }
 
-.custom-cell {
+.student-cell {
   color: #4F4F4F;
 }
 
-.custom-cell-content {
+.student-cell-content {
   display: flex;
   align-items: center;
 }
@@ -462,8 +480,8 @@ export default {
   color: white !important;
 }
 
-.row-selected .custom-cell,
-.row-selected .custom-cell .cell-text {
+.row-selected .student-cell,
+.row-selected .student-cell .cell-text {
   color: white !important;
 }
 
@@ -553,5 +571,39 @@ export default {
 
 .card-container {
   margin-left: 0px;
+}
+
+.no-students-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+  text-align: center;
+}
+
+.no-students-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.no-students-image {
+  width: 380px;
+  margin-bottom: 16px;
+}
+
+.no-students-text {
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: #4F4F4F;
+  margin-bottom: 8px;
+}
+
+.no-students-subtext {
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4F4F4F;
 }
 </style>
