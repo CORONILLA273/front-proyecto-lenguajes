@@ -59,28 +59,44 @@
     <v-col cols="3" class="card-container">
       <v-card v-if="selectedStudent" class="mx-auto" max-width="313" flat>
         <v-card-title class="text-center">
-          <div class="text-center" style="width: 95%; font-size: 16px; color: #424242; font-weight: 500;">
+          <div class="text-center" style="width: 95%; font-size: 16px; color: #424242; font-weight: 500; font-family: 'Kumbh Sans', sans-serif;">
             {{ selectedStudent.id }}
           </div>
         </v-card-title>
         <v-card-text class="text-center">
           <div style="text-align: center;">
             <img :src="getAvatarUrl(selectedStudent.id)" alt="avatar" class="avatar" style="width: 180px; height: 180px; font-size: 16px;">
-            <div style="font-weight: 700; font-size: 16px; color:#1A1A1A; padding-top: 15px; padding-bottom: 6px;">
+            <div style="font-family: 'Kumbh Sans', sans-serif; font-weight: 700; font-size: 18px; color:#1A1A1A; padding-top: 15px; padding-bottom: 6px;">
               {{ selectedStudent.nameStu }}
             </div>
-            <div>{{ selectedStudent.classStu }}</div>
-            <div class="icons" style="padding-top: 14px; padding-bottom: 30px;">
-              <img :src="teacherIcon" alt="Teacher" class="icon">
-              <img :src="callCallingIcon" alt="Call Calling" class="icon">
-              <img :src="smsIcon" alt="SMS" class="icon">
+            <div>{{ getTypeStudent(selectedStudent.classStu) }}</div>
+            <div class="icons" style="padding-top: 14px; padding-bottom: 30px; display: flex; justify-content: center;">
+              <div class="icon-container" @mouseenter="showTooltip('classStu')" @mouseleave="hideTooltip">
+                <img :src="teacherIcon" alt="Teacher" class="icon">
+                <div v-if="tooltipVisible && tooltipType === 'classStu'" class="tooltip">
+                  {{ selectedStudent.classStu }}
+                </div>
+              </div>
+              <div class="icon-container" @mouseenter="showTooltip('phoneStu')" @mouseleave="hideTooltip">
+                <img :src="callCallingIcon" alt="Call Calling" class="icon">
+                <div v-if="tooltipVisible && tooltipType === 'phoneStu'" class="tooltip">
+                  {{ selectedStudent.phoneStu }}
+                </div>
+              </div>
+              <div class="icon-container" @mouseenter="showTooltip('emailStu')" @mouseleave="hideTooltip">
+                <img :src="smsIcon" alt="SMS" class="icon">
+                <div v-if="tooltipVisible && tooltipType === 'emailStu'" class="tooltip">
+                  {{ selectedStudent.emailStu }}
+                </div>
+              </div>
             </div>
-            <div class="about-section" style="color: black; font-size: 12px; padding-bottom: 100px;">
+            <div class="about-section">
               About
             </div>
+            <div style="text-align: justify;">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Repellendus officiis obcaecati fugiat dolorem dicta adipisci natus dignissimos officia unde sequi reprehenderit ipsum expedita omnis, nihil vitae architecto nulla cum eaque?</div>
             <div class="info-section">
               <div class="info-item">
-                <div class="info-label">
+                <div class="info-label" style="font-weight: 600;">
                   Age
                 </div>
                 <div style="font-size: 14px; font-weight: 500;">
@@ -88,13 +104,13 @@
                 </div>
               </div>
               <div class="info-item">
-                <div class="info-label">
+                <div class="info-label" style="font-weight: 600;">
                   Gender
                 </div>
                 <div>{{ selectedStudent.genderStu }}</div>
               </div>
             </div>
-            <div class="about-section" style="color: black; font-size: 12px;">
+            <div class="about-section">
               People from the same class
             </div>
             <div class="same-class">
@@ -255,6 +271,10 @@ export default {
       selectedRow: null,
       selectedStudent: null,
 
+      // Tooltip data
+      tooltipVisible: false,
+      tooltipType: null,
+
       // Íconos
       callCallingIcon,
       smsIcon,
@@ -327,6 +347,25 @@ export default {
       this.selectedStudent = student
       this.hoveredRow = null
     },
+    getTypeStudent (classStu) {
+      if (classStu === 'SS 1' || classStu === 'SS 2' || classStu === 'SS 3') {
+        return 'Science Student'
+      } else if (classStu === 'JSS 1' || classStu === 'JSS 2' || classStu === 'JSS 3') {
+        return 'Math Student'
+      } else if (classStu === 'SJ 1' || classStu === 'SJ 2' || classStu === 'SJ 3') {
+        return 'Physics Student'
+      } else {
+        return 'Medical Student'
+      }
+    },
+    showTooltip (type) {
+      this.tooltipType = type
+      this.tooltipVisible = true
+    },
+    hideTooltip () {
+      this.tooltipVisible = false
+      this.tooltipType = null
+    },
     agregar () {
       this.validForm = this.$refs.form.validate()
       if (this.validForm) {
@@ -365,7 +404,7 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap');
 
 .custom-table {
   font-weight: 500;
@@ -403,8 +442,8 @@ export default {
 }
 
 .avatar-small {
-  width: 35px;
-  height: 35px;
+  width: 37px;
+  height: 37px;
   border-radius: 50%;
   margin-right: -8px;
   position: relative;
@@ -440,17 +479,35 @@ export default {
 }
 
 .icon {
-  width: 44px;
-  height: 44px;
+  width: 50px;
+  height: 50px;
   margin: 0 8px;
   padding: 10px;
 }
 
+.icon-container {
+  position: relative;
+}
+
+.tooltip {
+  position: absolute;
+  font-family: 'Kumbh Sans', sans-serif;
+  color: #4F4F4F;
+  padding: 5px;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 10;
+}
+
 .about-section {
+  font-family: 'Kumbh Sans', sans-serif;
+  color: black;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 12px;
   text-align: left;
-  margin: 16px 0;
+  margin: 12px 0;
 }
 
 .info-section {
@@ -458,13 +515,16 @@ export default {
   justify-content: space-between;
   margin: 16px 0;
   text-align: left;
+  font-family: 'Kumbh Sans', sans-serif;
 }
 
 .info-item {
   width: 50%;
+  font-family: 'Kumbh Sans', sans-serif;
 }
 
 .info-label {
+  font-family: 'Kumbh Sans', sans-serif;
   font-weight: 600;
   font-size: 12px;
   padding-bottom: 3px;
