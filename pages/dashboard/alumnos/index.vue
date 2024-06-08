@@ -1,27 +1,29 @@
 <template>
   <v-app>
-    <v-container>
-      <v-toolbar flat>
-        <v-btn text color="blue" style="margin-right: 10px;">
-          <span style="color: blue; text-transform: none;">
-            Export CSV
-          </span>
-        </v-btn>
-        <v-btn color="blue" @click="showNuevo = true">
-          <span style="color: white; text-transform: none;">
-            Add Students
-          </span>
-        </v-btn>
-        <v-spacer />
-        <v-icon left>
-          mdi-bell
-        </v-icon>
-        <v-btn text color="blue" style="text-align: right; margin-right: 50px;">
-          <span style="color: black; text-transform: none;">
-            Log out
-          </span>
-        </v-btn>
-      </v-toolbar>
+    <v-container style="margin-top: -70px;">
+      <v-app-bar app flat>
+        <v-toolbar flat>
+          <v-btn text color="blue" style="margin-right: 10px;">
+            <span style="color: blue; text-transform: none;">
+              Export CSV
+            </span>
+          </v-btn>
+          <v-btn color="blue" @click="showNuevo = true">
+            <span style="color: white; text-transform: none;">
+              Add Students
+            </span>
+          </v-btn>
+          <v-spacer />
+          <v-icon left>
+            mdi-bell
+          </v-icon>
+          <v-btn text color="blue" style="text-align: right; margin-right: 50px;">
+            <span style="color: black; text-transform: none;">
+              Log out
+            </span>
+          </v-btn>
+        </v-toolbar>
+      </v-app-bar>
 
       <v-row class="mt-3">
         <v-col cols="1" style="margin-left: 20px;">
@@ -527,6 +529,10 @@ export default {
 
 .icons {
   margin-top: 16px;
+}
+
+.v-app-bar {
+  background-color: white !important;
 }
 
 .icon {
