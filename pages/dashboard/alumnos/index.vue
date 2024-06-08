@@ -253,6 +253,7 @@
 </template>
 
 <script>
+import noStudents from '../../../assets/estudiantes/no-notification.png'
 import callCallingIcon from '../../../assets/svg/call-calling.png'
 import smsIcon from '../../../assets/svg/sms.png'
 import teacherIcon from '../../../assets/svg/teacher.png'
@@ -307,12 +308,16 @@ export default {
       ageNumStu: null,
       hoveredRow: null,
       selectedRow: null,
-      selectedStudent: null, // Estudiante seleccionado
+      selectedStudent: null,
+      juan: [],
 
-      // Íconos
+      tooltipVisible: false,
+      tooltipType: null,
+
       callCallingIcon,
       smsIcon,
       teacherIcon,
+      noStudents,
 
       passwordValidation: [
         v => (v && v.length > 8) || 'Password must have be more than 8 chars'
@@ -382,6 +387,25 @@ export default {
       this.selectedRow = student.id
       this.selectedStudent = student
       this.hoveredRow = null
+    },
+    getTypeStudent (classStu) {
+      if (classStu === 'SS 1' || classStu === 'SS 2' || classStu === 'SS 3') {
+        return 'Science Student'
+      } else if (classStu === 'JSS 1' || classStu === 'JSS 2' || classStu === 'JSS 3') {
+        return 'Math Student'
+      } else if (classStu === 'SJ 1' || classStu === 'SJ 2' || classStu === 'SJ 3') {
+        return 'Physics Student'
+      } else {
+        return 'Medical Student'
+      }
+    },
+    showTooltip (type) {
+      this.tooltipType = type
+      this.tooltipVisible = true
+    },
+    hideTooltip () {
+      this.tooltipVisible = false
+      this.tooltipType = null
     },
     agregar () {
       this.validForm = this.$refs.form.validate()
@@ -463,32 +487,32 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap');
 
-.custom-table {
+.student-table {
   font-weight: 500;
   padding: 16px;
   font-family: 'Kumbh Sans', sans-serif;
   color: #4F4F4F;
 }
 
-.custom-header {
-  background-color: #f5f5f5; /* Puedes ajustar el color de fondo si lo deseas */
+.student-header {
+  background-color: #f5f5f5;
 }
 
-.custom-header-cell {
+.student-header-cell {
   font-weight: 700;
   padding: 16px;
   text-align: left;
-  font-size: 14px; /* Ajusta el tamaño de la letra aquí */
+  font-size: 14px;
   color: #4F4F4F;
 }
 
-.custom-cell {
+.student-cell {
   color: #4F4F4F;
 }
 
-.custom-cell-content {
+.student-cell-content {
   display: flex;
   align-items: center;
 }
@@ -500,29 +524,37 @@ export default {
   margin-right: 8px;
 }
 
+.avatar-small {
+  width: 37px;
+  height: 37px;
+  border-radius: 50%;
+  margin-right: -8px;
+  position: relative;
+}
+
 .cell-text {
-  color: inherit; /* Inherit color from parent */
+  color: inherit;
 }
 
 .row-hover {
-  background-color: #D5E7F6 !important; /* Azul claro para el hover */
+  background-color: #D5E7F6 !important;
 }
 
 .row-selected {
-  background-color: #509CDB !important; /* Azul claro para la selección */
-  color: white !important; /* Color del texto blanco */
+  background-color: #509CDB !important;
+  color: white !important;
 }
 
-.row-selected .custom-cell,
-.row-selected .custom-cell .cell-text {
-  color: white !important; /* Asegura que el texto de las celdas sea blanco */
+.row-selected .student-cell,
+.row-selected .student-cell .cell-text {
+  color: white !important;
 }
 
 .v-data-table tbody tr {
   cursor: pointer;
   color: #4F4F4F;
-  height: 55px; /* Aumentar la altura de cada fila */
-  line-height: 55px; /* Ajustar la altura de línea para centrar el contenido verticalmente */
+  height: 55px;
+  line-height: 55px;
 }
 
 .icons {
@@ -530,31 +562,113 @@ export default {
 }
 
 .icon {
-  width: 44px;
-  height: 44px;
+  width: 50px;
+  height: 50px;
   margin: 0 8px;
   padding: 10px;
 }
 
-.about-section {
-  font-weight: bold;
-  font-size: 16px;
-  text-align: left;
-  margin: 16px 0;
+.icon-container {
+  position: relative;
 }
+
+.tooltip {
+  position: absolute;
+  font-family: 'Kumbh Sans', sans-serif;
+  color: #4F4F4F;
+  padding: 5px;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.about-section {
+  font-family: 'Kumbh Sans', sans-serif;
+  color: black;
+  font-weight: bold;
+  font-size: 12px;
+  text-align: left;
+  margin: 12px 0;
+}
+
 .info-section {
   display: flex;
   justify-content: space-between;
   margin: 16px 0;
   text-align: left;
+  font-family: 'Kumbh Sans', sans-serif;
 }
+
 .info-item {
   width: 50%;
+  font-family: 'Kumbh Sans', sans-serif;
 }
+
 .info-label {
+  font-family: 'Kumbh Sans', sans-serif;
   font-weight: 600;
   font-size: 12px;
   padding-bottom: 3px;
   color: #1A1A1A;
+}
+
+.same-class {
+  display: flex;
+  align-items: center;
+}
+
+.avatars {
+  display: flex;
+  position: relative;
+}
+
+.extra-count {
+  margin-left: 20px;
+  font-size: 10px;
+  color: #73B0E2;
+}
+
+.table-container {
+  margin-right: 0px;
+}
+
+.card-container {
+  margin-left: 0px;
+}
+
+.no-students-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+  text-align: center;
+}
+
+.no-students-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.no-students-image {
+  width: 380px;
+  margin-bottom: 16px;
+}
+
+.no-students-text {
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: #4F4F4F;
+  margin-bottom: 8px;
+}
+
+.no-students-subtext {
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4F4F4F;
 }
 </style>
