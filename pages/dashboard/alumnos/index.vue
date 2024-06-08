@@ -216,7 +216,7 @@
           <v-col cols="6">
             <v-btn block color="primary" @click="agregar">
               <span style="color: white; text-transform: none;">
-                Add student
+                Add Student
               </span>
             </v-btn>
           </v-col>
