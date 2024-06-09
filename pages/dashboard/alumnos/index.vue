@@ -482,7 +482,7 @@ export default {
       this.validForm = this.$refs.form.validate()
       if (this.validForm) {
         const sendData = {
-          id: Date.now().toString(),
+          id: this.getUniqueId().toString(),
           nameStu: this.studentName,
           emailStu: this.schoolEmailStu,
           classStu: this.classNameStu,
@@ -552,6 +552,18 @@ export default {
       } else {
         alert('Faltan Datos')
       }
+    },
+    generateRandomId () {
+      return Math.floor(100000 + Math.random() * 900000)// Genera un número de 6 dígitos
+    },
+    getUniqueId () {
+      const usedIds = new Set()
+      let randomId = this.generateRandomId()
+      while (usedIds.has(randomId)) {
+        randomId = this.generateRandomId()
+      }
+      usedIds.add(randomId)
+      return randomId
     }
   }
 }
