@@ -19,7 +19,7 @@
           </v-icon>
           <v-btn text color="blue" style="text-align: right; margin-right: 50px;" @click="logOut()">
             <span style="color: black; text-transform: none;">
-              Log out
+              Log Out
             </span>
           </v-btn>
         </v-toolbar>
