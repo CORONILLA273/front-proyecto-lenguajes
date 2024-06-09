@@ -189,17 +189,20 @@ export default {
             {
               id: 15,
               icon: require('~/assets/sideBar/vector.png'),
-              title: 'Admission Form'
+              title: 'Admission Form',
+              to: '/dashboard/alumnos/admissionForms'
             },
             {
               id: 16,
               icon: require('~/assets/sideBar/vector.png'),
-              title: 'Student Promotion'
+              title: 'Student Promotion',
+              to: '/dashboard/alumnos/studentPromotion'
             },
             {
               id: 17,
               icon: require('~/assets/sideBar/vector.png'),
-              title: 'Class'
+              title: 'Class',
+              to: '/dashboard/alumnos/class'
             }
           ]
         },
