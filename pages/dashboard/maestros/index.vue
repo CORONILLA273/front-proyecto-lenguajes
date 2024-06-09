@@ -97,45 +97,61 @@
             </template>
           </v-data-table>
         </v-row>
+
         <v-row v-if="selectedTeacher" class="mt-3 teacher-details">
-          <v-col cols="6" class="text-center">
-            <img :src="getAvatarUrl(selectedTeacher.id)" alt="avatar" class="avatar-large">
-            <div class="teacher-name">
-              {{ selectedTeacher.nameTea }}
-            </div>
-            <div class="teacher-class">
-              {{ selectedTeacher.classTea }}
-            </div>
-            <div class="icons" style="padding-top: 14px; padding-bottom: 30px;">
-              <img :src="teacherIcon" alt="Teacher" class="icon">
-              <img :src="callCallingIcon" alt="Call Calling" class="icon">
-              <img :src="smsIcon" alt="SMS" class="icon">
-            </div>
-          </v-col>
-          <v-col cols="6">
-            <div class="about-section">
-              <h3>About</h3>
-              <p>{{ selectedTeacher.aboutTea }}</p>
-            </div>
-            <div class="info-section">
-              <div class="info-item">
-                <div class="info-label">
-                  Age
-                </div>
-                <div>{{ selectedTeacher.ageTea }}</div>
-              </div>
-              <div class="info-item">
-                <div class="info-label">
-                  Gender
-                </div>
-                <div>{{ selectedTeacher.genderTea }}</div>
-              </div>
-            </div>
-            <div class="about-section" style="color: black; font-size: 12px;">
-              People from the same class
-            </div>
-          </v-col>
+          <v-container>
+            <v-layout justify-center>
+              <v-flex xs12 sm10 md15 lg10>
+                <!-- Cambiado de md8 lg6 a md10 lg8 para más ancho -->
+                <v-card class="pa-5" elevation="0">
+                  <!-- Aumentar el padding interno de pa-3 a pa-5 -->
+                  <v-row>
+                    <v-col cols="6" class="text-center" style="padding-right: 20px;">
+                      <img :src="getAvatarUrl(selectedTeacher.id)" alt="avatar" class="avatar-large">
+                      <div class="teacher-name">
+                        {{ selectedTeacher.nameTea || 'No name available' }}
+                      </div>
+                      <div class="teacher-class">
+                        {{ selectedTeacher.classTea || 'No class specified' }}
+                      </div>
+                      <div class="icons" style="padding-top: 14px; padding-bottom: 30px;">
+                        <img :src="teacherIcon" alt="Teacher" class="icon">
+                        <img :src="callCallingIcon" alt="Call Calling" class="icon">
+                        <img :src="smsIcon" alt="SMS" class="icon">
+                      </div>
+                    </v-col>
+                    <v-col cols="6" style="padding-left: 50px;">
+                      <div class="about-section">
+                        <h3>About</h3>
+                        <p>Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum.</p>
+                      </div>
+                      <div class="info-section">
+                        <v-row>
+                          <v-col cols="6">
+                            <div class="info-label">
+                              Age
+                            </div>
+                            <div>37</div>
+                          </v-col>
+                          <v-col cols="6">
+                            <div class="info-label">
+                              Gender
+                            </div>
+                            <div>{{ selectedTeacher.genderTea || 'No gender specified' }}</div>
+                          </v-col>
+                        </v-row>
+                      </div>
+                      <div class="about-section" style="color: black; font-size: 12px;">
+                        People from the same class
+                      </div>
+                    </v-col>
+                  </v-row>
+                </v-card>
+              </v-flex>
+            </v-layout>
+          </v-container>
         </v-row>
+
         <v-dialog v-model="showNuevo" max-width="1100" persistent @click:outside="closeDialog">
           <v-card style="overflow: hidden; width: 100%; height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 50px;">
             <v-card-title class="text-h4" style="text-align: left; width: 100%;">
@@ -356,6 +372,9 @@ export default {
       })
     }
   },
+  firstFiveClassmates () {
+    return this.filteredClassmates.slice(0, 5)
+  },
   mounted () {
     this.token = localStorage.getItem('token')
     if (!this.token) {
@@ -575,8 +594,8 @@ export default {
 }
 
 .avatar-large {
-  width: 180px;
-  height: 180px;
+  width: 290px; /* Incrementamos de 180px a 220px */
+  height: 290px; /* Incrementamos de 180px a 220px */
   border-radius: 50%;
 }
 
