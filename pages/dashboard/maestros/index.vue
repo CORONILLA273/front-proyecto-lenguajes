@@ -26,25 +26,41 @@
       </v-app-bar>
 
       <v-row style="margin-top: -60px;">
-        <v-col cols="1">
-          <v-select
-            v-model="filter"
-            :items="filterOptions"
-            label="Filter"
-            outlined
-            dense
-          />
-        </v-col>
-        <v-col cols="6">
-          <v-text-field
-            v-model="searchTeacher"
-            prepend-inner-icon="mdi-magnify"
-            label="Search for a teacher by name or email"
-            outlined
-            hide-details
-            @input="searchTeacherByName"
-          />
-        </v-col>
+        <template v-if="maestros.length === 0">
+          <v-col cols="12" class="no-teachers-container">
+            <div class="no-teachers-content">
+              <img :src="noTeachers" alt="No Teachers" class="no-teachers-image">
+              <div class="no-teachers-text">
+                No teachers at this time
+              </div>
+              <div class="no-teachers-subtext">
+                Teachers will appear here after they enroll in your school.
+              </div>
+            </div>
+          </v-col>
+        </template>
+
+        <template v-else>
+          <v-col cols="1">
+            <v-select
+              v-model="filter"
+              :items="filterOptions"
+              label="Filter"
+              outlined
+              dense
+            />
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              v-model="searchTeacher"
+              prepend-inner-icon="mdi-magnify"
+              label="Search for a teacher by name or email"
+              outlined
+              hide-details
+              @input="searchTeacherByName"
+            />
+          </v-col>
+        </template>
       </v-row>
 
       <v-col cols="12">
@@ -319,6 +335,7 @@
 </template>
 
 <script>
+import noTeachers from '../../../assets/estudiantes/no-notification.png'
 import callCallingIcon from '../../../assets/svg/call-calling.png'
 import smsIcon from '../../../assets/svg/sms.png'
 import teacherIcon from '../../../assets/svg/teacher.png'
@@ -360,6 +377,7 @@ export default {
       ],
       token: null,
       maestros: [],
+      juan: [],
       search: '',
       showNuevo: false,
       validForm: false,
@@ -381,6 +399,7 @@ export default {
       callCallingIcon,
       smsIcon,
       teacherIcon,
+      noTeachers,
 
       tooltipVisible: false,
       tooltipType: null,
@@ -735,5 +754,39 @@ export default {
   margin-left: 20px;
   font-size: 10px;
   color: #73B0E2;
+}
+
+.no-teachers-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+  text-align: center;
+}
+
+.no-teachers-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.no-teachers-image {
+  width: 380px;
+  margin-bottom: 16px;
+}
+
+.no-teachers-text {
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: #4F4F4F;
+  margin-bottom: 8px;
+}
+
+.no-teachers-subtext {
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4F4F4F;
 }
 </style>
