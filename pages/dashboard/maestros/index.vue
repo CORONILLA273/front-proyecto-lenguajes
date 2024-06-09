@@ -19,36 +19,52 @@
           </v-icon>
           <v-btn text color="blue" style="text-align: right; margin-right: 50px;" @click="logOut()">
             <span style="color: black; text-transform: none;">
-              Log out
+              Log Out
             </span>
           </v-btn>
         </v-toolbar>
       </v-app-bar>
 
       <v-row style="margin-top: -60px;">
-        <v-col cols="1">
-          <v-select
-            v-model="filter"
-            :items="filterOptions"
-            label="Filter"
-            outlined
-            dense
-          />
-        </v-col>
-        <v-col cols="6">
-          <v-text-field
-            v-model="searchTeacher"
-            prepend-inner-icon="mdi-magnify"
-            label="Search for a teacher by name or email"
-            outlined
-            hide-details
-            @input="searchTeacherByName"
-          />
-        </v-col>
+        <template v-if="maestros.length === 0">
+          <v-col cols="12" class="no-teachers-container">
+            <div class="no-teachers-content">
+              <img :src="noTeachers" alt="No Teachers" class="no-teachers-image">
+              <div class="no-teachers-text">
+                No teachers at this time
+              </div>
+              <div class="no-teachers-subtext">
+                Teachers will appear here after they enroll in your school.
+              </div>
+            </div>
+          </v-col>
+        </template>
+
+        <template v-else>
+          <v-col cols="1">
+            <v-select
+              v-model="filter"
+              :items="filterOptions"
+              label="Filter"
+              outlined
+              dense
+            />
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              v-model="searchTeacher"
+              prepend-inner-icon="mdi-magnify"
+              label="Search for a teacher by name or email"
+              outlined
+              hide-details
+              @input="searchTeacherByName"
+            />
+          </v-col>
+        </template>
       </v-row>
 
       <v-col cols="12">
-        <v-row v-if="!selectedTeacher" class="mt-3">
+        <v-row v-if="!selectedTeacher && maestros.length > 0" class="mt-3">
           <v-data-table
             :headers="headers"
             :items="filteredTeachers"
@@ -102,9 +118,7 @@
           <v-container>
             <v-layout justify-center>
               <v-flex xs12 sm10 md15 lg10>
-                <!-- Cambiado de md8 lg6 a md10 lg8 para más ancho -->
                 <v-card class="pa-5" elevation="0">
-                  <!-- Aumentar el padding interno de pa-3 a pa-5 -->
                   <v-row>
                     <v-col cols="6" class="text-center" style="padding-right: 20px;">
                       <img :src="getAvatarUrl(selectedTeacher.id)" alt="avatar" class="avatar-large">
@@ -114,10 +128,25 @@
                       <div class="teacher-class">
                         {{ selectedTeacher.classTea || 'No class specified' }}
                       </div>
-                      <div class="icons" style="padding-top: 14px; padding-bottom: 30px;">
-                        <img :src="teacherIcon" alt="Teacher" class="icon">
-                        <img :src="callCallingIcon" alt="Call Calling" class="icon">
-                        <img :src="smsIcon" alt="SMS" class="icon">
+                      <div class="icons" style="padding-top: 14px; padding-bottom: 30px; display: flex; justify-content: center;">
+                        <div class="icon-container" @mouseenter="showTooltip('classTea')" @mouseleave="hideTooltip">
+                          <img :src="teacherIcon" alt="Teacher" class="icon">
+                          <div v-if="tooltipVisible && tooltipType === 'classTea'" class="tooltip">
+                            {{ selectedTeacher.classTea }}
+                          </div>
+                        </div>
+                        <div class="icon-container" @mouseenter="showTooltip('phoneTea')" @mouseleave="hideTooltip">
+                          <img :src="callCallingIcon" alt="Call Calling" class="icon">
+                          <div v-if="tooltipVisible && tooltipType === 'phoneTea'" class="tooltip">
+                            {{ selectedTeacher.phoneTea }}
+                          </div>
+                        </div>
+                        <div class="icon-container" @mouseenter="showTooltip('emailTea')" @mouseleave="hideTooltip">
+                          <img :src="smsIcon" alt="SMS" class="icon">
+                          <div v-if="tooltipVisible && tooltipType === 'emailTea'" class="tooltip">
+                            {{ selectedTeacher.emailTea }}
+                          </div>
+                        </div>
                       </div>
                     </v-col>
                     <v-col cols="6" style="padding-left: 50px;">
@@ -141,8 +170,23 @@
                           </v-col>
                         </v-row>
                       </div>
-                      <div class="about-section" style="color: black; font-size: 12px;">
-                        People from the same class
+                      <div class="about-section" style="padding-bottom: 28px;">
+                        <h3>People from the same class</h3>
+                      </div>
+                      <div class="same-class">
+                        <div class="avatars">
+                          <img
+                            v-for="(teacher, index) in firstFiveMates"
+                            :key="teacher.id"
+                            :src="getAvatarUrl(teacher.id)"
+                            alt="avatar"
+                            class="avatar-small"
+                            :style="{ zIndex: index }"
+                          >
+                        </div>
+                        <div v-if="remainingMatesCount > 0" class="extra-count">
+                          +{{ remainingMatesCount }} more
+                        </div>
                       </div>
                     </v-col>
                   </v-row>
@@ -291,6 +335,7 @@
 </template>
 
 <script>
+import noTeachers from '../../../assets/estudiantes/no-notification.png'
 import callCallingIcon from '../../../assets/svg/call-calling.png'
 import smsIcon from '../../../assets/svg/sms.png'
 import teacherIcon from '../../../assets/svg/teacher.png'
@@ -332,6 +377,8 @@ export default {
       ],
       token: null,
       maestros: [],
+      juan: [],
+      search: '',
       showNuevo: false,
       validForm: false,
       teacherName: null,
@@ -352,6 +399,10 @@ export default {
       callCallingIcon,
       smsIcon,
       teacherIcon,
+      noTeachers,
+
+      tooltipVisible: false,
+      tooltipType: null,
 
       passwordValidation: [
         v => (v && v.length > 8) || 'Password must have be more than 8 chars'
@@ -370,10 +421,17 @@ export default {
           teacher.emailTea.toLowerCase().includes(searchTerm)
         )
       })
+    },
+    filteredMates () {
+      if (!this.selectedTeacher) { return [] }
+      return this.maestros.filter(teacher => teacher.classTea === this.selectedTeacher.classTea && teacher.id !== this.selectedTeacher.id)
+    },
+    firstFiveMates () {
+      return this.filteredMates.slice(0, 5)
+    },
+    remainingMatesCount () {
+      return this.filteredMates.length - 5
     }
-  },
-  firstFiveClassmates () {
-    return this.filteredClassmates.slice(0, 5)
   },
   mounted () {
     this.token = localStorage.getItem('token')
@@ -425,6 +483,14 @@ export default {
       this.selectedRow = teacher.id
       this.selectedTeacher = teacher
       this.hoveredRow = null
+    },
+    showTooltip (type) {
+      this.tooltipType = type
+      this.tooltipVisible = true
+    },
+    hideTooltip () {
+      this.tooltipVisible = false
+      this.tooltipType = null
     },
     agregar () {
       this.validForm = this.$refs.form.validate()
@@ -484,7 +550,6 @@ export default {
           .then((res) => {
             if (res.data.message === 'Profesor Registrado Satisfactoriamente') {
               this.getAllTeachers()
-              // Limpiar los campos del formulario
               this.teacherName = ''
               this.classNameTeacher = ''
               this.genderNameTeacher = ''
@@ -598,8 +663,8 @@ export default {
 }
 
 .avatar-large {
-  width: 290px; /* Incrementamos de 180px a 220px */
-  height: 290px; /* Incrementamos de 180px a 220px */
+  width: 290px;
+  height: 290px;
   border-radius: 50%;
 }
 
@@ -628,6 +693,22 @@ export default {
   height: 30px;
 }
 
+.icon-container {
+  position: relative;
+}
+
+.tooltip {
+  position: absolute;
+  font-family: 'Kumbh Sans', sans-serif;
+  color: #4F4F4F;
+  padding: 5px;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 10;
+}
+
 .about-section {
   margin-top: 20px;
 }
@@ -649,5 +730,63 @@ export default {
 
 .v-toolbar {
   background-color: white !important;
+}
+
+.same-class {
+  display: flex;
+  align-items: center;
+}
+
+.avatars {
+  display: flex;
+  position: relative;
+}
+
+.avatar-small {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-right: -20px;
+  position: relative;
+}
+
+.extra-count {
+  margin-left: 20px;
+  font-size: 10px;
+  color: #73B0E2;
+}
+
+.no-teachers-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+  text-align: center;
+}
+
+.no-teachers-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.no-teachers-image {
+  width: 380px;
+  margin-bottom: 16px;
+}
+
+.no-teachers-text {
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: #4F4F4F;
+  margin-bottom: 8px;
+}
+
+.no-teachers-subtext {
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4F4F4F;
 }
 </style>
