@@ -523,6 +523,7 @@ export default {
             if (res.data.message === 'Profesor Registrado Satisfactoriamente') {
               this.getAllTeachers()
               this.showNuevo = false
+              this.resetForm()
             }
           })
           .catch((err) => {

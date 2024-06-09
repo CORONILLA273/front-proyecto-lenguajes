@@ -9,22 +9,22 @@
       <v-spacer /> <!-- Espaciador antes de los botones para centrar -->
       <div class="button-container">
         <!-- Contenedor para los botones -->
-        <v-btn text class="button-text-transform btn-spacing" href="#">
+        <v-btn text class="button-text-transform btn-spacing" href="#home">
           Home
         </v-btn>
-        <v-btn text class="button-text-transform btn-spacing" href="#">
+        <v-btn text class="button-text-transform btn-spacing" href="#pricing">
           Pricing
         </v-btn>
         <v-btn text class="button-text-transform btn-spacing" href="#">
           Use Cases
         </v-btn>
-        <v-btn text class="button-text-transform btn-spacing" href="#">
+        <v-btn text class="button-text-transform btn-spacing" href="#location">
           Location
         </v-btn>
         <v-btn text class="button-text-transform btn-spacing" href="#">
           FAQ
         </v-btn>
-        <v-btn text class="button-text-transform btn-spacing" href="#">
+        <v-btn text class="button-text-transform btn-spacing" href="#company">
           Company
         </v-btn>
       </div>
@@ -39,7 +39,7 @@
     <!-- Main content area -->
     <v-main>
       <!-- Custom Section Below Toolbar -->
-      <div class="full-width-section">
+      <div id="home" class="full-width-section">
         <div class="custom-button-container">
           <v-btn class="custom-consultation-button">
             Get Your Consultation Now
@@ -232,7 +232,7 @@
       <v-container>
         <v-row>
           <v-col>
-            <h1 class="plan-title">
+            <h1 id="pricing" class="plan-title">
               Pick up the best plan
             </h1>
             <!-- Contenedor para el texto dividido en tres líneas -->
@@ -472,7 +472,7 @@
     </v-main>
 
     <!-- Footer -->
-    <v-footer color="#100F57" class="pa-10">
+    <v-footer id="location" color="#100F57" class="pa-10">
       <v-container fluid>
         <v-row>
           <!-- Columnas de Enlaces -->
@@ -563,7 +563,7 @@
           </v-col>
         </v-row>
         <!-- Fila para el texto de derechos de autor y enlaces legales alineados a la derecha -->
-        <v-container class="my-separator" />
+        <v-container id="company" class="my-separator" />
         <v-row>
           <v-col cols="12" sm="6" class="white--text text-left">
             ©2024 Scholl Management. Copyright And All Rights Reserved.

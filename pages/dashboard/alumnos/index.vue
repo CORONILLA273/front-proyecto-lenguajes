@@ -502,6 +502,7 @@ export default {
             if (res.data.message === 'Estudiante Registrado Satisfactoriamente') {
               this.getAllStudents()
               this.showNuevo = false
+              this.resetForm()
             }
           })
           .catch((err) => {
@@ -537,13 +538,7 @@ export default {
             if (res.data.message === 'Estudiante Registrado Satisfactoriamente') {
               this.getAllStudents()
               // Limpiar los campos del formulario
-              this.studentName = ''
-              this.classNameStu = ''
-              this.genderNameStu = ''
-              this.schoolEmailStu = ''
-              this.phoneNumberStu = ''
-              this.passwordStu = ''
-              this.ageNumStu = ''
+              this.resetForm()
             }
           })
           .catch((err) => {
@@ -552,6 +547,15 @@ export default {
       } else {
         alert('Faltan Datos')
       }
+    },
+    resetForm () {
+      // Resetear valores de los campos del formulario
+      this.studentName = ''
+      this.schoolEmailStu = ''
+      this.phoneNumberStu = ''
+      this.passwordStu = ''
+      this.classNameStu = null // Asegurarse de que los v-select también se resetean correctamente
+      this.genderNameStu = null // Asegurarse de que los v-select también se resetean correctamente
     },
     generateRandomId () {
       return Math.floor(100000 + Math.random() * 900000)// Genera un número de 6 dígitos
