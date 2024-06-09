@@ -126,7 +126,7 @@
                         {{ selectedTeacher.nameTea || 'No name available' }}
                       </div>
                       <div class="teacher-class">
-                        {{ selectedTeacher.classTea || 'No class specified' }}
+                        {{ selectedTeacher.subjectTea || 'No class specified' }}
                       </div>
                       <div class="icons" style="padding-top: 14px; padding-bottom: 30px; display: flex; justify-content: center;">
                         <div class="icon-container" @mouseenter="showTooltip('classTea')" @mouseleave="hideTooltip">
@@ -152,7 +152,9 @@
                     <v-col cols="6" style="padding-left: 50px;">
                       <div class="about-section">
                         <h3>About</h3>
-                        <p>Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum.</p>
+                        <p class="about-text">
+                          Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum.
+                        </p>
                       </div>
                       <div class="info-section">
                         <v-row>
@@ -160,13 +162,17 @@
                             <div class="info-label">
                               Age
                             </div>
-                            <div>37</div>
+                            <div class="about-text">
+                              37
+                            </div>
                           </v-col>
                           <v-col cols="6">
                             <div class="info-label">
                               Gender
                             </div>
-                            <div>{{ selectedTeacher.genderTea || 'No gender specified' }}</div>
+                            <div class="about-text">
+                              {{ selectedTeacher.genderTea || 'No gender specified' }}
+                            </div>
                           </v-col>
                         </v-row>
                       </div>
@@ -219,25 +225,25 @@
                       />
                     </v-col>
                     <v-col cols="4">
-                      &nbsp;
+                      Email
                       <v-text-field
                         v-model="emailTeacher"
                         :rules="emailValidation"
                         outlined
                         placeholder="Email"
                         type="email"
-                        style="margin-bottom: 20px; margin-left: 20px;"
+                        style="margin-bottom: 20px;"
                       />
                     </v-col>
                     <v-col cols="4">
-                      &nbsp;
+                      Phone Number
                       <v-text-field
                         v-model="phoneNumberTeacher"
                         :rules="[v => !!v || 'Field is required']"
                         outlined
                         placeholder="Phone Number"
                         type="text"
-                        style="margin-bottom: 20px; margin-left: 20px;"
+                        style="margin-bottom: 20px;"
                       />
                     </v-col>
                   </v-row>
@@ -253,49 +259,49 @@
                       />
                     </v-col>
                     <v-col cols="4">
-                      &nbsp;
-                      <v-text-field
+                      Class
+                      <v-select
                         v-model="classNameTeacher"
+                        :items="['JSS 1', 'JSS 2', 'JSS 3', 'SS 1', 'SS 2', 'SS 3']"
                         :rules="[v => !!v || 'Field is required']"
                         outlined
-                        placeholder="Class"
-                        type="text"
-                        style="margin-bottom: 20px; margin-left: 20px;"
+                        label="Class"
+                        style="margin-bottom: 20px;"
                       />
                     </v-col>
                     <v-col cols="4">
-                      &nbsp;
+                      Subject
                       <v-text-field
                         v-model="subjectTeacher"
                         :rules="[v => !!v || 'Field is required']"
                         outlined
                         placeholder="Subject"
                         type="text"
-                        style="margin-bottom: 20px; margin-left: 20px;"
+                        style="margin-bottom: 20px;"
                       />
                     </v-col>
                   </v-row>
                   <v-row>
                     <v-col cols="4">
                       Gender
-                      <v-text-field
+                      <v-select
                         v-model="genderNameTeacher"
+                        :items="['Male', 'Female', 'Other']"
                         :rules="[v => !!v || 'Field is required']"
                         outlined
-                        placeholder="Gender"
-                        type="text"
+                        label="Gender"
                         style="margin-bottom: 20px;"
                       />
                     </v-col>
                     <v-col cols="4">
-                      &nbsp;
+                      Designation
                       <v-text-field
                         v-model="designationTeacher"
                         :rules="[v => !!v || 'Field is required']"
                         outlined
                         placeholder="Designation"
                         type="text"
-                        style="margin-bottom: 20px; margin-left: 20px;"
+                        style="margin-bottom: 20px;"
                       />
                     </v-col>
                   </v-row>
@@ -303,7 +309,7 @@
               </v-form>
             </v-card-text>
 
-            <v-card-actions style="width: 100%; display: flex; justify-content: center; margin-left: 40px;">
+            <v-card-actions style="width: 100%; display: flex; justify-content: center; margin-top: -50px;">
               <v-row style="width: 80%;">
                 <v-col cols="2">
                   <v-btn
@@ -550,14 +556,7 @@ export default {
           .then((res) => {
             if (res.data.message === 'Profesor Registrado Satisfactoriamente') {
               this.getAllTeachers()
-              this.teacherName = ''
-              this.classNameTeacher = ''
-              this.genderNameTeacher = ''
-              this.emailTeacher = ''
-              this.phoneNumberTeacher = ''
-              this.passwordTeacher = ''
-              this.subjectTeacher = ''
-              this.designationTeacher = ''
+              this.resetForm()
             }
           })
           .catch((err) => {
@@ -566,6 +565,17 @@ export default {
       } else {
         alert('Faltan Datos')
       }
+    },
+    resetForm () {
+      // Resetear valores de los campos del formulario
+      this.teacherName = ''
+      this.emailTeacher = ''
+      this.phoneNumberTeacher = ''
+      this.passwordTeacher = ''
+      this.classNameTeacher = null // Asegurarse de que los v-select también se resetean correctamente
+      this.subjectTeacher = ''
+      this.genderNameTeacher = null // Asegurarse de que los v-select también se resetean correctamente
+      this.designationTeacher = ''
     },
     searchTeacherByName () {
       const teacher = this.maestros.find(m => m.nameTea.toLowerCase() === this.searchTeacher.toLowerCase())
@@ -588,6 +598,15 @@ export default {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@400;700&display=swap');
+
+.about-text {
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 21px;
+  text-align: left;
+  color: #A7A7A7;
+}
 
 .custom-table {
   padding: 16px;

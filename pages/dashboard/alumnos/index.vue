@@ -278,7 +278,7 @@
             </v-form>
           </v-card-text>
 
-          <v-card-actions style="width: 100%; display: flex; justify-content: center; margin-left: 40px;">
+          <v-card-actions style="width: 100%; display: flex; justify-content: center; margin-top: -50px;">
             <v-row style="width: 80%;">
               <v-col cols="2">
                 <v-btn
@@ -515,7 +515,7 @@ export default {
       this.validForm = this.$refs.form.validate()
       if (this.validForm) {
         const sendData = {
-          id: Date.now().toString(),
+          id: this.getUniqueId().toString(),
           nameStu: this.studentName,
           emailStu: this.schoolEmailStu,
           classStu: this.classNameStu,
